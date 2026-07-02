@@ -4,5 +4,5 @@ on:
   push:
     branches: [feat/v0.0.12]
 jobs:
-  docs-strict:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  verify-signatures:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@54bf3e37156691c479cddf30c069145268dc2f8b
