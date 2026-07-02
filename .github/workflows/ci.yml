@@ -16,8 +16,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Caller-side permissions must be at least as broad as every
+# reusable workflow's declared `permissions:` block.
+# `shared-verify-signatures.yml` needs `pull-requests: read` to
+# iterate PR commits via the REST API.
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: ci-${{ github.ref }}
