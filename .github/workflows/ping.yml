@@ -1,5 +1,7 @@
 name: Ping
 on:
+  push:
+    branches: [feat/v0.0.12]
   workflow_dispatch:
 jobs:
   ping:
