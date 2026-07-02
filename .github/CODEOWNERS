@@ -1,0 +1,10 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
+#
+# noyalib-wasm CODEOWNERS — every path is owned by the project
+# maintainer. Adding co-maintainers in the future: assign them
+# to specific directory globs above the catch-all so PR reviews
+# are routed sensibly.
+#
+# Reference: https://docs.github.com/en/repositories/managing-your-repositories-settings-and-features/customizing-your-repository/about-code-owners
+
+* @sebastienrousseau

@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 Noyalib
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+version: 2
+
+updates:
+  # Cargo — check weekly for direct dep updates. Under ADR-0005's
+  # strict-lockstep versioning contract, the `noyalib = "=0.0.X"`
+  # pin is bumped in coordination with the parent-repo release,
+  # NOT on Dependabot's own cadence. Dependabot's role here is
+  # limited to non-noyalib transitives.
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "cargo"
+    ignore:
+      # noyalib bumps are coordinated with the parent repo's
+      # release tag, not Dependabot. See ADR-0005 (in
+      # sebastienrousseau/noyalib) for the lockstep contract.
+      - dependency-name: "noyalib"
+
+  # GitHub Actions — includes SHA bumps of the shared reusable
+  # workflows consumed from sebastienrousseau/noyalib. A hardening
+  # pass in noyalib produces a Dependabot PR here; the 48h
+  # propagation SLA monitor (in noyalib) tracks whether that PR
+  # is landed on time.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "05:00"
+      timezone: "Etc/UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "ci"
+      - "dependencies"

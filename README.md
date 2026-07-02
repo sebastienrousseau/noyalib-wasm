@@ -52,10 +52,19 @@ yarn add @noyalib/noyalib-wasm
 Or build from source against any wasm-pack target:
 
 ```sh
-git clone https://github.com/sebastienrousseau/noyalib
-cd noyalib/crates/noyalib-wasm
+git clone https://github.com/sebastienrousseau/noyalib-wasm
+cd noyalib-wasm
 wasm-pack build --release --target bundler
 ```
+
+> **Split from the monorepo since v0.0.12.** Prior versions
+> shipped from `sebastienrousseau/noyalib/crates/noyalib-wasm/`.
+> From v0.0.12 onward `noyalib-wasm` lives here as its own crate,
+> released in strict lockstep with the parent
+> [`noyalib`](https://github.com/sebastienrousseau/noyalib) at
+> the same version. See
+> [ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/doc/adr/0005-workspace-split.md)
+> for the rationale and rollback recipe.
 
 ---
 
