@@ -41,6 +41,7 @@ path = [
     "README.md",
     "CHANGELOG.md",
     "SECURITY.md",
+    "doc/**",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Noyalib"
