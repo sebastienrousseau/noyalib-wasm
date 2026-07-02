@@ -1,0 +1,23 @@
+name: ProbeAll
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/v0.0.12]
+jobs:
+  cargo-deny:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  cargo-vet:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  cargo-machete:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  reuse-lint:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  docs-strict:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  verify-signatures:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+  test-matrix:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@54bf3e37156691c479cddf30c069145268dc2f8b
+    with:
+      os-list: '["ubuntu-latest"]'
+      toolchain-list: '["stable", "nightly"]'
