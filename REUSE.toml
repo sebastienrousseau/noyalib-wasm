@@ -23,6 +23,9 @@ path = [
     "osv-scanner.toml",
     "rust-toolchain.toml",
     "REUSE.toml",
+    "supply-chain/audits.toml",
+    "supply-chain/config.toml",
+    "supply-chain/imports.lock",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Noyalib"
