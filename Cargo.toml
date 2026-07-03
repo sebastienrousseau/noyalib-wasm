@@ -1,29 +1,29 @@
 [package]
 name = "noyalib-wasm"
-version = "0.0.11"
+version = "0.0.12"
 edition = "2024"
 rust-version = "1.85.0"
 license = "MIT OR Apache-2.0"
 description = "WebAssembly (wasm-bindgen) bindings for the noyalib YAML library — browser-ready parse / serialise / lossless edit"
-repository = "https://github.com/sebastienrousseau/noyalib"
-homepage = "https://github.com/sebastienrousseau/noyalib"
+repository = "https://github.com/sebastienrousseau/noyalib-wasm"
+homepage = "https://github.com/sebastienrousseau/noyalib-wasm"
 documentation = "https://docs.rs/noyalib-wasm"
 readme = "README.md"
 keywords = ["yaml", "wasm", "wasm-bindgen", "browser", "noyalib"]
 categories = ["wasm", "encoding", "parser-implementations"]
 authors = ["Sebastien Rousseau <sebastian.rousseau@gmail.com>"]
-# Distributed via npm as `@noyalib/noyalib-wasm` rather than
-# crates.io — the bindgen output is the consumer-facing artifact,
-# not the Rust crate. Metadata above is filled in for
-# `cargo metadata` consumers and for parity with the rest of the
-# workspace.
-publish = false
+
+# ADR-0005 workspace-split — cross-repo dep, no path override.
+# Every dependency on `noyalib` MUST be an exact-match crates.io
+# pin under the strict-lockstep versioning contract; a `path =`
+# override on a published branch is a regression that CI checks.
 
 [lib]
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-noyalib = { path = "../noyalib", version = "0.0.11", features = ["std"] }
+# ADR-0005 lockstep — noyalib pin is exact-match, not caret.
+noyalib = { version = "=0.0.12", features = ["std"] }
 wasm-bindgen = "0.2"
 serde = { version = "1.0", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
@@ -42,4 +42,3 @@ wasm-opt = false
 # the dep — disabling it would lose the readable JS-side
 # stack-trace integration.
 ignored = ["console_error_panic_hook"]
-

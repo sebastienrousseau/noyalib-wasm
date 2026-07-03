@@ -1,0 +1,32 @@
+target/
+
+# Editor artifacts
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Cargo
+*.orig
+
+# Coverage artifacts
+*.profraw
+lcov.info
+tarpaulin-report.html
+.claude/
+
+# Scratch / patch scripts
+# Throwaway one-shot find-and-replace scripts must not land at the repo
+# root. If a fix needs to be permanent, codify it in a Make/just target
+# under scripts/ instead.
+/fix_*.py
+/patch_*.py
+/debug.rs
+/scratch.*
+crates/noyalib-wasm/Cargo.lock

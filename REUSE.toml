@@ -1,0 +1,62 @@
+# SPDX-FileCopyrightText: 2026 Noyalib
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+# REUSE 3.3 annotations: blanket licensing for files that don't
+# carry an inline SPDX header (config, fixtures, generated
+# artefacts). Source code files (.rs) keep their inline SPDX
+# headers — this file only fills in the gaps.
+#
+# Documented at https://reuse.software/spec-3.3/
+
+version = 1
+
+# ── Project meta / config files ───────────────────────────────────
+[[annotations]]
+path = [
+    ".editorconfig",
+    ".gitattributes",
+    ".gitignore",
+    ".rustfmt.toml",
+    "Cargo.toml",
+    "Cargo.lock",
+    "deny.toml",
+    "osv-scanner.toml",
+    "rust-toolchain.toml",
+    "REUSE.toml",
+    "supply-chain/audits.toml",
+    "supply-chain/config.toml",
+    "supply-chain/imports.lock",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Noyalib"
+SPDX-License-Identifier = "MIT OR Apache-2.0"
+
+# ── CI workflows ──────────────────────────────────────────────────
+[[annotations]]
+path = ".github/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Noyalib"
+SPDX-License-Identifier = "MIT OR Apache-2.0"
+
+# ── Documentation ─────────────────────────────────────────────────
+[[annotations]]
+path = [
+    "README.md",
+    "CHANGELOG.md",
+    "SECURITY.md",
+    "doc/**",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Noyalib"
+SPDX-License-Identifier = "MIT OR Apache-2.0"
+
+# ── Test fixtures + examples ──────────────────────────────────────
+[[annotations]]
+path = [
+    "index.html",
+    "examples/**",
+    "tests/**",
+]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Noyalib"
+SPDX-License-Identifier = "MIT OR Apache-2.0"

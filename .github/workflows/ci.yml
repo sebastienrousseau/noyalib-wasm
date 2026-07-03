@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: 2026 Noyalib
+# SPDX-License-Identifier: MIT OR Apache-2.0
+
+name: CI
+
+# Every job here consumes a reusable workflow from
+# `sebastienrousseau/noyalib` pinned by SHA. A supply-chain
+# hardening pass in noyalib propagates to this satellite via a
+# Dependabot SHA-bump PR — enforced by the 48h propagation SLA
+# monitor in the parent repo (scripts/shared-workflow-propagation-monitor.sh).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Caller-side permissions must be at least as broad as every
+# reusable workflow's declared `permissions:` block.
+# `shared-verify-signatures.yml` needs `pull-requests: read` to
+# iterate PR commits via the REST API.
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cargo-deny:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+
+  cargo-vet:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+
+  cargo-machete:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+
+  reuse-lint:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+
+  docs-strict:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+
+  verify-signatures:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+
+  test-matrix:
+    # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
+    # narrowed to ubuntu-latest only — the JS binding surface is
+    # exercised end-to-end by wasm-bindgen-test under a headless
+    # browser rather than by native `cargo test` on macOS/Windows.
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    with:
+      os-list: '["ubuntu-latest"]'
+      toolchain-list: '["stable", "nightly"]'
