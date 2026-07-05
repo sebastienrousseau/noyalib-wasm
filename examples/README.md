@@ -3,7 +3,7 @@
 # `noyalib-wasm` examples
 
 Browser + Node demos exercising the
-[`@noyalib/noyalib-wasm`](https://www.npmjs.com/package/@noyalib/noyalib-wasm)
+[`@sebastienrousseau/noyalib-wasm`](https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm)
 surface.
 
 | Path | Target | What it shows |
