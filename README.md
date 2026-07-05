@@ -15,9 +15,9 @@
 
 <p align="center">
   <a href="https://github.com/sebastienrousseau/noyalib/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/noyalib/ci.yml?style=for-the-badge&logo=github" alt="Build" /></a>
-  <a href="https://www.npmjs.com/package/@noyalib/noyalib-wasm"><img src="https://img.shields.io/npm/v/@noyalib/noyalib-wasm?style=for-the-badge&color=fc8d62&logo=npm" alt="npm" /></a>
+  <a href="https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/npm/v/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=fc8d62&logo=npm" alt="npm" /></a>
   <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs.rs" /></a>
-  <a href="https://bundlephobia.com/package/@noyalib/noyalib-wasm"><img src="https://img.shields.io/bundlephobia/minzip/@noyalib/noyalib-wasm?style=for-the-badge&color=informational" alt="Bundle size" /></a>
+  <a href="https://bundlephobia.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/bundlephobia/minzip/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=informational" alt="Bundle size" /></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
 </p>
 
@@ -42,11 +42,11 @@
 ## Install
 
 ```sh
-npm install @noyalib/noyalib-wasm
+npm install @sebastienrousseau/noyalib-wasm
 # or
-pnpm add @noyalib/noyalib-wasm
+pnpm add @sebastienrousseau/noyalib-wasm
 # or
-yarn add @noyalib/noyalib-wasm
+yarn add @sebastienrousseau/noyalib-wasm
 ```
 
 Or build from source against any wasm-pack target:
@@ -78,7 +78,7 @@ import init, {
   getPath,
   merge,
   WasmDocument,
-} from "@noyalib/noyalib-wasm";
+} from "@sebastienrousseau/noyalib-wasm";
 
 await init();          // load the WASM blob
 
@@ -234,7 +234,7 @@ linking the published bundle to the GitHub Actions run that
 produced it. Verify via:
 
 ```sh
-npm view @noyalib/noyalib-wasm provenance
+npm view @sebastienrousseau/noyalib-wasm provenance
 ```
 
 The underlying `.wasm` is also signed with cosign keyless
@@ -320,7 +320,7 @@ consume the `bundler` target.
 - **Bundling (Vite, Webpack, Next.js, Cloudflare Workers, Deno, Bun)**:
   [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md)
 - **npm package**:
-  <https://www.npmjs.com/package/@noyalib/noyalib-wasm>
+  <https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm>
 - **API reference (rustdoc)**: <https://docs.rs/noyalib-wasm>
 - **Workspace README**:
   <https://github.com/sebastienrousseau/noyalib#readme>
