@@ -266,8 +266,16 @@ jobs:
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
-          set -euxo pipefail
-          cargo publish --all-features --locked
+          set -uxo pipefail
+          # Idempotent: tolerate a re-run where this version is already on
+          # crates.io (e.g. re-tagging to fix a later, non-crates job).
+          out=$(cargo publish --all-features --locked 2>&1) && rc=0 || rc=$?
+          echo "$out"
+          if [ "$rc" -ne 0 ]; then
+            echo "$out" | grep -qE 'already (exists|uploaded)' \
+              && { echo "version already on crates.io — tolerating"; exit 0; }
+            exit "$rc"
+          fi
 
   # ── Publish to npm (wasm-pack) ──────────────────────────────────────
   npm-publish:
@@ -296,8 +304,15 @@ jobs:
 
       - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+
+      # npm OIDC Trusted Publishing for the *publish* (not just provenance)
+      # requires npm >= 11.5.1. Node 24 ships npm 11.x; upgrade explicitly
+      # to be certain — otherwise the publish PUT is unauthenticated and
+      # npm returns E404 on the scoped package (the earlier v0.0.15 failure).
+      - name: Ensure npm supports OIDC Trusted Publishing
+        run: npm install -g npm@latest
 
       - name: Build (wasm-pack)
         run: |
