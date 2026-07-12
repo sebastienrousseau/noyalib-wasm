@@ -238,6 +238,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Idempotent: drop an existing release (keep the tag) so a
+          # re-tag re-run does not fail on "release already exists".
+          gh release delete "$GITHUB_REF_NAME" --yes 2>/dev/null || true
           gh release create "$GITHUB_REF_NAME" \
             --title "noyalib-wasm $GITHUB_REF_NAME" \
             --notes-file RELEASE_NOTES.md \
@@ -321,4 +324,13 @@ jobs:
       - name: Publish (Trusted Publishing + provenance)
         run: |
           cd pkg
-          npm publish --provenance --access public
+          set -uxo pipefail
+          # Idempotent: a re-tag re-run finds this version already on npm
+          # (npm forbids republishing the same version -> E403).
+          out=$(npm publish --provenance --access public 2>&1) && rc=0 || rc=$?
+          echo "$out"
+          if [ "$rc" -ne 0 ]; then
+            echo "$out" | grep -qiE 'cannot publish over|previously published|already exists' \
+              && { echo "version already on npm — tolerating"; exit 0; }
+            exit "$rc"
+          fi
