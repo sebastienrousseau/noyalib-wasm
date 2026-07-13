@@ -52,7 +52,7 @@ jobs:
     # narrowed to ubuntu-latest only — the JS binding surface is
     # exercised end-to-end by wasm-bindgen-test under a headless
     # browser rather than by native `cargo test` on macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@f1e0beff99fedea30fc263689db67240c9b62892
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
