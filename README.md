@@ -263,8 +263,15 @@ Browser + Node demos under
 |---|---|---|
 | [`node-stringify.js`](examples/node-stringify.js) | Node | `parse` + `stringify` round-trip. |
 | [`cst-edit.js`](examples/cst-edit.js) | Node | Lossless CST edit; comments + whitespace preserved. |
+| [`paths-and-spans.js`](examples/paths-and-spans.js) | Node | `getPath`, `merge`, `getSource`, `spanAt`, `replaceSpan`, `setValue`, `commentsAt`. |
 | [`json-compat.js`](examples/json-compat.js) | Node | `validateJson` — refuse YAML that JSON cannot represent (NaN / Infinity). |
 | [`browser/index.html`](examples/browser/index.html) | Browser | Live in-page YAML editor with a parsed-JSON pane. |
+| [`benches/bench.js`](benches/bench.js) | Node | Throughput measured across the real JS↔wasm boundary. |
+
+> The wasm build ships **no JSON Schema engine**. `validateJson` only
+> checks JSON round-trip safety. For JSON Schema 2020-12 use
+> `noyavalidate --schema`, or the `noyalib` crate's `validate-schema`
+> feature.
 
 ```bash
 # Node:

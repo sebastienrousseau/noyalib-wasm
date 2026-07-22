@@ -51,6 +51,9 @@ rule("merge — defaults + environment overlay");
 const overrides = "service:\n  replicas: 10\n  tier: production\n";
 const merged = merge(source, overrides);
 console.log(merged.split("\n").map((l) => `  | ${l}`).join("\n"));
+// Note: `merge` re-serialises, so it is NOT lossless — the comments and
+// the explicit quoting around `name` are gone. Use the Document API
+// below when byte fidelity matters.
 
 // ── document-oriented reads ─────────────────────────────────────────
 const doc = new WasmDocument(source);
@@ -64,9 +67,20 @@ console.log("  getSource('service.name') =", JSON.stringify(doc.getSource("servi
 rule("spanAt — byte offsets for editor tooling");
 const span = doc.spanAt("service.replicas");
 console.log("  span:", JSON.stringify(span));
-if (span && typeof span.start === "number") {
-    console.log("  bytes at span:", JSON.stringify(source.slice(span.start, span.end)));
-}
+// GOTCHA: spans are BYTE offsets into UTF-8. A JS string is indexed in
+// UTF-16 code units, so `source.slice(start, end)` is wrong the moment
+// the document contains a non-ASCII character — the em dash in the
+// header above is enough to shift every later offset by two. Go through
+// a Buffer (Node) or TextEncoder/TextDecoder (browser).
+const bytes = Buffer.from(source, "utf8");
+console.log(
+    "  bytes at span:",
+    JSON.stringify(bytes.slice(span.start, span.end).toString("utf8")),
+);
+console.log(
+    "  naive str.slice (WRONG):",
+    JSON.stringify(source.slice(span.start, span.end)),
+);
 
 rule("commentsAt — comments attached to a node");
 console.log("  service.name ->", JSON.stringify(doc.commentsAt("service.name")));
@@ -81,9 +95,8 @@ rule("replaceSpan — surgical edit by byte offset");
 // Offsets are the escape hatch when a path cannot express the edit —
 // e.g. rewriting part of a scalar, or a formatter reflowing a region.
 const nameSpan = doc.spanAt("service.name");
-if (nameSpan && typeof nameSpan.start === "number") {
-    doc.replaceSpan(nameSpan.start, nameSpan.end, '"api-edge"');
-}
+console.log("  replacing bytes", nameSpan.start, "..", nameSpan.end);
+doc.replaceSpan(nameSpan.start, nameSpan.end, '"api-edge"');
 
 rule("result — comments and layout intact");
 console.log(doc.toString().split("\n").map((l) => `  | ${l}`).join("\n"));
