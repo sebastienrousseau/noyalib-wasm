@@ -294,8 +294,8 @@ python3 -m http.server     # or any static-file server
 
 ## Compatibility
 
-**MSRV: Rust 1.85.0** stable. The `wasm-bindgen` 0.2 ecosystem
-floors the toolchain at 1.85; the core `noyalib` library
+**MSRV: Rust 1.86.0** stable. The `wasm-bindgen` 0.2 ecosystem
+floors the toolchain at 1.86; the core `noyalib` library
 itself stays at 1.75. CI verifies the floor on every PR via
 the `Per-crate MSRV` workflow job. The bump policy lives in
 [`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#1-msrv-minimum-supported-rust-version).
