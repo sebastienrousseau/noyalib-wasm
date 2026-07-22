@@ -30,29 +30,29 @@ concurrency:
 
 jobs:
   cargo-deny:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
 
   cargo-vet:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
 
   cargo-machete:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
 
   reuse-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
 
   docs-strict:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
 
   verify-signatures:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
 
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
     # narrowed to ubuntu-latest only — the JS binding surface is
     # exercised end-to-end by wasm-bindgen-test under a headless
     # browser rather than by native `cargo test` on macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@346a9b0a79fe5d1397dd499e66fc5c234570779a
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
