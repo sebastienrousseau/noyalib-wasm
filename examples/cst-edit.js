@@ -11,7 +11,7 @@
 
 "use strict";
 
-const { Document } = require("../pkg/noyalib_wasm.js");
+const { WasmDocument } = require("../pkg/noyalib_wasm.js");
 
 const source = `\
 # Production server config — keep these comments aligned with
@@ -21,7 +21,9 @@ server:
   port: 8080              # bind to the loopback in dev
 `;
 
-const doc = Document.parse(source);
+// The class is exported as `WasmDocument` and is constructed, not
+// parsed via a static — `new WasmDocument(src)`.
+const doc = new WasmDocument(source);
 doc.set("server.port", "9090");
 
 console.log("── before ──");

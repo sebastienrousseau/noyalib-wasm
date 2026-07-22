@@ -263,13 +263,14 @@ Browser + Node demos under
 |---|---|---|
 | [`node-stringify.js`](examples/node-stringify.js) | Node | `parse` + `stringify` round-trip. |
 | [`cst-edit.js`](examples/cst-edit.js) | Node | Lossless CST edit; comments + whitespace preserved. |
-| [`schema-validate.js`](examples/schema-validate.js) | Node | JSON Schema 2020-12 validation, good and bad cases. |
+| [`json-compat.js`](examples/json-compat.js) | Node | `validateJson` — refuse YAML that JSON cannot represent (NaN / Infinity). |
 | [`browser/index.html`](examples/browser/index.html) | Browser | Live in-page YAML editor with a parsed-JSON pane. |
 
 ```bash
 # Node:
 wasm-pack build --release --target nodejs crates/noyalib-wasm
 node crates/noyalib-wasm/examples/cst-edit.js
+node crates/noyalib-wasm/examples/json-compat.js
 
 # Browser:
 wasm-pack build --release --target web crates/noyalib-wasm
