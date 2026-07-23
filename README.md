@@ -263,13 +263,21 @@ Browser + Node demos under
 |---|---|---|
 | [`node-stringify.js`](examples/node-stringify.js) | Node | `parse` + `stringify` round-trip. |
 | [`cst-edit.js`](examples/cst-edit.js) | Node | Lossless CST edit; comments + whitespace preserved. |
-| [`schema-validate.js`](examples/schema-validate.js) | Node | JSON Schema 2020-12 validation, good and bad cases. |
+| [`paths-and-spans.js`](examples/paths-and-spans.js) | Node | `getPath`, `merge`, `getSource`, `spanAt`, `replaceSpan`, `setValue`, `commentsAt`. |
+| [`json-compat.js`](examples/json-compat.js) | Node | `validateJson` — refuse YAML that JSON cannot represent (NaN / Infinity). |
 | [`browser/index.html`](examples/browser/index.html) | Browser | Live in-page YAML editor with a parsed-JSON pane. |
+| [`benches/bench.js`](benches/bench.js) | Node | Throughput measured across the real JS↔wasm boundary. |
+
+> The wasm build ships **no JSON Schema engine**. `validateJson` only
+> checks JSON round-trip safety. For JSON Schema 2020-12 use
+> `noyavalidate --schema`, or the `noyalib` crate's `validate-schema`
+> feature.
 
 ```bash
 # Node:
 wasm-pack build --release --target nodejs crates/noyalib-wasm
 node crates/noyalib-wasm/examples/cst-edit.js
+node crates/noyalib-wasm/examples/json-compat.js
 
 # Browser:
 wasm-pack build --release --target web crates/noyalib-wasm
@@ -294,9 +302,10 @@ python3 -m http.server     # or any static-file server
 
 ## Compatibility
 
-**MSRV: Rust 1.85.0** stable. The `wasm-bindgen` 0.2 ecosystem
-floors the toolchain at 1.85; the core `noyalib` library
-itself stays at 1.75. CI verifies the floor on every PR via
+**MSRV: Rust 1.86.0** stable — a deliberate policy choice: one floor across the whole lockstep set,
+with headroom for the dependency tree. No current dependency *requires*
+1.86 — this crate still compiles on 1.85. The whole lockstep set,
+including the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
 the `Per-crate MSRV` workflow job. The bump policy lives in
 [`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#1-msrv-minimum-supported-rust-version).
 
