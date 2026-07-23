@@ -302,9 +302,10 @@ python3 -m http.server     # or any static-file server
 
 ## Compatibility
 
-**MSRV: Rust 1.86.0** stable. The `wasm-bindgen` 0.2 ecosystem
-floors the toolchain at 1.86. The whole lockstep set, including
-the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
+**MSRV: Rust 1.86.0** stable — a deliberate policy choice: one floor across the whole lockstep set,
+with headroom for the dependency tree. No current dependency *requires*
+1.86 — this crate still compiles on 1.85. The whole lockstep set,
+including the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
 the `Per-crate MSRV` workflow job. The bump policy lives in
 [`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#1-msrv-minimum-supported-rust-version).
 
