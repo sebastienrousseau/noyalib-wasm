@@ -109,8 +109,20 @@ criteria = "safe-to-deploy"
 version = "1.0.23"
 criteria = "safe-to-deploy"
 
+[[exemptions.serde]]
+version = "1.0.229"
+criteria = "safe-to-deploy"
+
 [[exemptions.serde-wasm-bindgen]]
 version = "0.6.5"
+criteria = "safe-to-deploy"
+
+[[exemptions.serde_core]]
+version = "1.0.229"
+criteria = "safe-to-deploy"
+
+[[exemptions.serde_derive]]
+version = "1.0.229"
 criteria = "safe-to-deploy"
 
 [[exemptions.serde_ignored]]
@@ -131,6 +143,10 @@ criteria = "safe-to-deploy"
 
 [[exemptions.syn]]
 version = "2.0.118"
+criteria = "safe-to-deploy"
+
+[[exemptions.syn]]
+version = "3.0.3"
 criteria = "safe-to-deploy"
 
 [[exemptions.unicode-ident]]
