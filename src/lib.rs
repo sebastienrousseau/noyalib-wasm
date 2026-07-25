@@ -12,11 +12,10 @@
 //!
 //! # Cargo features
 //!
-//! - **`wasm-opt`** *(optional, off by default)* — enables a
-//!   post-build pass that re-runs Binaryen's `wasm-opt -O3 -s`
-//!   on the produced `.wasm` to shrink the bundle (~17% smaller
-//!   on `noyalib-wasm`). Pulls in no extra Rust dependencies; it
-//!   is a build-script feature only. Disable for fastest dev
+//! - **`wasm-opt`** *(optional, off by default)* — enables a post-build pass
+//!   that re-runs Binaryen's `wasm-opt -O3 -s` on the produced `.wasm` to
+//!   shrink the bundle (~17% smaller on `noyalib-wasm`). Pulls in no extra Rust
+//!   dependencies; it is a build-script feature only. Disable for fastest dev
 //!   builds.
 //!
 //! Optional `noyalib` features pulled in by a downstream wasm-pack
@@ -43,23 +42,20 @@
 //! panic on the WebAssembly instance are environmental, not
 //! logic, and are documented here for completeness:
 //!
-//! - **WASM linear-memory exhaustion (OOM).** Allocating a Vec
-//!   or String larger than the host's WASM memory limit aborts
-//!   the instance. Browsers default to a 4 GiB cap on
-//!   `wasm32-unknown-unknown`. Bound `noyalib` resource use
-//!   ahead of time via `ParserConfig::strict()` or explicit
-//!   `max_*` budgets to fail with a structured `Error::Budget`
-//!   instead of an OOM abort.
-//! - **Stack overflow.** Pathologically deep YAML (>4096 nested
-//!   nodes by default) is rejected with `Error::RecursionLimitExceeded`
-//!   long before the WASM stack overflows; deliberately
-//!   misconfigured `max_depth` may overflow the host stack.
-//! - **Host abort on `panic = abort`.** Every release build
-//!   uses `panic = abort` (per `Cargo.toml`), so any logic-level
-//!   panic terminates the WebAssembly instance with no chance
-//!   of `catch_unwind`. `console_error_panic_hook` is wired in
-//!   `examples/` so debug builds surface a JS-readable trace
-//!   before the abort.
+//! - **WASM linear-memory exhaustion (OOM).** Allocating a Vec or String larger
+//!   than the host's WASM memory limit aborts the instance. Browsers default to
+//!   a 4 GiB cap on `wasm32-unknown-unknown`. Bound `noyalib` resource use
+//!   ahead of time via `ParserConfig::strict()` or explicit `max_*` budgets to
+//!   fail with a structured `Error::Budget` instead of an OOM abort.
+//! - **Stack overflow.** Pathologically deep YAML (>4096 nested nodes by
+//!   default) is rejected with `Error::RecursionLimitExceeded` long before the
+//!   WASM stack overflows; deliberately misconfigured `max_depth` may overflow
+//!   the host stack.
+//! - **Host abort on `panic = abort`.** Every release build uses `panic =
+//!   abort` (per `Cargo.toml`), so any logic-level panic terminates the
+//!   WebAssembly instance with no chance of `catch_unwind`.
+//!   `console_error_panic_hook` is wired in `examples/` so debug builds surface
+//!   a JS-readable trace before the abort.
 //!
 //! # Errors
 //!
@@ -121,15 +117,10 @@
 //!
 //! # Documentation
 //!
-//! - **Engineering policies** — workspace
-//!   [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md).
-//! - **JS API reference**:
-//!   [`doc/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md).
-//! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare,
-//!   Deno, Bun):
-//!   [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
-//! - **Browser / Node demos**:
-//!   [`examples/`](https://github.com/sebastienrousseau/noyalib/tree/main/crates/noyalib-wasm/examples).
+//! - **Engineering policies** — workspace [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md).
+//! - **JS API reference**: [`doc/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md).
+//! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare, Deno, Bun): [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
+//! - **Browser / Node demos**: [`examples/`](https://github.com/sebastienrousseau/noyalib/tree/main/crates/noyalib-wasm/examples).
 
 #![forbid(unsafe_code)]
 
@@ -142,10 +133,9 @@ use wasm_bindgen::prelude::*;
 /// Convert a Rust value to a `JsValue` using the JS-friendly
 /// serializer config:
 ///
-/// - **Mappings** become plain JS Objects (`{ name: 'foo' }`),
-///   not the `Map` instance `serde_wasm_bindgen`'s default
-///   produces. End users overwhelmingly expect dot-property
-///   access (`value.name`) rather than `.get('name')`.
+/// - **Mappings** become plain JS Objects (`{ name: 'foo' }`), not the `Map`
+///   instance `serde_wasm_bindgen`'s default produces. End users overwhelmingly
+///   expect dot-property access (`value.name`) rather than `.get('name')`.
 /// - Other defaults are preserved.
 fn to_js<T: Serialize + ?Sized>(value: &T) -> Result<JsValue, serde_wasm_bindgen::Error> {
     let serializer = serde_wasm_bindgen::Serializer::new().serialize_maps_as_objects(true);
@@ -158,7 +148,8 @@ struct WasmSpan {
     end: usize,
 }
 
-/// A YAML document with byte-faithful source preservation and path-targeted edits.
+/// A YAML document with byte-faithful source preservation and path-targeted
+/// edits.
 #[wasm_bindgen]
 pub struct WasmDocument {
     inner: Document,
@@ -173,7 +164,8 @@ impl WasmDocument {
         Ok(WasmDocument { inner: doc })
     }
 
-    /// Re-emit the document as a string. Byte-identical to original if no edits.
+    /// Re-emit the document as a string. Byte-identical to original if no
+    /// edits.
     ///
     /// Bound on the JS side as `toString()` (the conventional camelCase
     /// name) so callers can write `doc.toString()` and override the
