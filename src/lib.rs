@@ -229,7 +229,7 @@ impl WasmDocument {
         match core::document_span_at(&self.inner, path) {
             Some((start, end)) => {
                 to_js(&WasmSpan { start, end }).map_err(|e| JsError::new(&e.to_string()))
-            }
+            },
             None => Ok(JsValue::NULL),
         }
     }

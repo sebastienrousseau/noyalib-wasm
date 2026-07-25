@@ -50,9 +50,52 @@ jobs:
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
     # narrowed to ubuntu-latest only — the JS binding surface is
-    # exercised end-to-end by wasm-bindgen-test under a headless
-    # browser rather than by native `cargo test` on macOS/Windows.
+    # exercised end-to-end by wasm-bindgen-test under node (the
+    # `wasm-test` job below) rather than by native `cargo test` on
+    # macOS/Windows.
     uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
+
+  # ── A+ rigor parity with the core ──────────────────────────────────
+  wasm-test:
+    # Runs the wasm-bindgen-test suite under node — the ONLY way to
+    # reach the `#[wasm_bindgen]` exports in src/lib.rs, which native
+    # `cargo test` cannot execute. This is the gate that proves the JS
+    # surface (WasmDocument + the free functions) actually works.
+    name: wasm-bindgen-test (node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: dtolnay/rust-toolchain@2c7215f132e9ebf062739d9130488b56d53c060c # master
+        with:
+          toolchain: stable
+          targets: wasm32-unknown-unknown
+      - uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa # v0.4.0
+        with:
+          version: 'latest'
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: '24'
+      - name: wasm-pack test --node
+        run: wasm-pack test --node
+
+  coverage-gate:
+    # Native coverage gates the pure-Rust core (src/core.rs, measured
+    # ~100 %). src/lib.rs is the `#[wasm_bindgen]` FFI layer — it is
+    # unreachable by native `cargo test` and is instead gated by the
+    # `wasm-test` job above, so it is excluded here rather than
+    # counted as an un-fixable coverage hole.
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@00ee7b90ca45138ad331387dae0d846799b8ab91
+    with:
+      ignore-filename-regex: 'src/lib\.rs'
+      fail-under-functions: 96
+      fail-under-lines: 94
+      fail-under-regions: 93
+
+  msrv-core:
+    # Verifies the declared 1.86.0 floor actually builds.
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@00ee7b90ca45138ad331387dae0d846799b8ab91
+    with:
+      toolchain: "1.86.0"
