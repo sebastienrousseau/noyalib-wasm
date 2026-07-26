@@ -160,7 +160,8 @@ pub fn document_get_source<'a>(doc: &'a Document, path: &str) -> Option<&'a str>
 ///
 /// ```
 /// let doc = noyalib::cst::parse_document("# top\nname: noyalib\n").unwrap();
-/// let (before, inline) = noyalib_wasm::core::document_comments_at(&doc, "name");
+/// let (before, inline) =
+///     noyalib_wasm::core::document_comments_at(&doc, "name");
 /// assert!(!before.is_empty());
 /// assert!(inline.is_none());
 /// ```

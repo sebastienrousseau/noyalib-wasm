@@ -1,0 +1,5 @@
+# Intentionally minimal: pins rustfmt to its DEFAULTS, which is exactly
+# what CI enforces (this crate sets no rustfmt options). Its presence
+# stops `cargo fmt` from walking up to a developer's global
+# ~/.rustfmt.toml and formatting divergently from the release Validate
+# gate. Do NOT add nightly-only options here — CI runs stable rustfmt.
