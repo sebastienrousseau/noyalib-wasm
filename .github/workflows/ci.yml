@@ -96,6 +96,6 @@ jobs:
 
   msrv-core:
     # Verifies the declared 1.86.0 floor actually builds.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@00ee7b90ca45138ad331387dae0d846799b8ab91
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@c98a9451a7349913f83668d83c0149443e6f1216
     with:
       toolchain: "1.86.0"
