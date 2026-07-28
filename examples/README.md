@@ -10,8 +10,25 @@ surface.
 |---|---|---|
 | [`node-stringify.js`](node-stringify.js) | Node | `parse` + `stringify` round-trip. |
 | [`cst-edit.js`](cst-edit.js) | Node | Lossless CST edit; comments + whitespace preserved. |
-| [`schema-validate.js`](schema-validate.js) | Node | JSON Schema 2020-12 validation, good- and bad-doc cases. |
+| [`paths-and-spans.js`](paths-and-spans.js) | Node | `getPath`, `merge`, `getSource`, `spanAt`, `replaceSpan`, `setValue`, `commentsAt`. |
+| [`json-compat.js`](json-compat.js) | Node | `validateJson` — refuses documents that JSON cannot represent. |
 | [`browser/index.html`](browser/index.html) | Browser | Live in-page YAML editor with a parsed-JSON pane. |
+
+> **Note.** There is no JSON Schema validation in the wasm build — it
+> ships no schema engine. `validateJson` only checks whether a document
+> can survive a JSON round-trip. For JSON Schema 2020-12 use the
+> `noyavalidate --schema` CLI or the `validate-schema` feature of the
+> `noyalib` Rust crate.
+
+## Benchmarks
+
+[`../benches/bench.js`](../benches/bench.js) measures throughput across
+the real JS↔wasm boundary — the only place the numbers mean anything:
+
+```bash
+wasm-pack build --release --target nodejs crates/noyalib-wasm
+node crates/noyalib-wasm/benches/bench.js
+```
 
 ## Build
 
