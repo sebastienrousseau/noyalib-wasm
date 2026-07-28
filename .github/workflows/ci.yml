@@ -87,7 +87,7 @@ jobs:
     # unreachable by native `cargo test` and is instead gated by the
     # `wasm-test` job above, so it is excluded here rather than
     # counted as an un-fixable coverage hole.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@00ee7b90ca45138ad331387dae0d846799b8ab91
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@c98a9451a7349913f83668d83c0149443e6f1216
     with:
       ignore-filename-regex: 'src/lib\.rs'
       fail-under-functions: 96
