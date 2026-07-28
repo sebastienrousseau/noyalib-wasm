@@ -53,7 +53,7 @@ jobs:
     # exercised end-to-end by wasm-bindgen-test under node (the
     # `wasm-test` job below) rather than by native `cargo test` on
     # macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@c98a9451a7349913f83668d83c0149443e6f1216
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
