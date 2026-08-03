@@ -45,7 +45,7 @@ jobs:
     uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@c98a9451a7349913f83668d83c0149443e6f1216
 
   verify-signatures:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@c98a9451a7349913f83668d83c0149443e6f1216
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@76235c1a4306a2bbee8ece3c1147a9245da91abf
 
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
