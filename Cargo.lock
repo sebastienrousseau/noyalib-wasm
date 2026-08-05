@@ -168,7 +168,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.18"
+version = "0.0.19"
 dependencies = [
  "console_error_panic_hook",
  "noyalib",
