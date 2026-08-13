@@ -39,7 +39,7 @@ jobs:
     uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@76235c1a4306a2bbee8ece3c1147a9245da91abf
 
   reuse-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@c35cd25375450d8867fbd25c6f27c224c0a498c3
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@cbb6194143bd8bea396e6223cdd34072b6d6ecf9
 
   docs-strict:
     uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@c98a9451a7349913f83668d83c0149443e6f1216
