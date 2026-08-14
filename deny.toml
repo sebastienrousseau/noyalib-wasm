@@ -20,13 +20,15 @@ yanked = "warn"
 # audit` and the OpenSSF Scorecard Vulnerabilities check stay
 # clean without needing per-advisory exemptions.
 ignore = [
-    # proc-macro-error2 is unmaintained (author confirmed). It reaches
-    # us only at build time via validator_derive -> validator (the
-    # `validate` feature); it never ships in a release artefact, so the
-    # advisory is informational for us. No maintained drop-in exists yet
-    # (validator has not migrated off it). Revisit when validator cuts a
-    # release that drops proc-macro-error2.
-    "RUSTSEC-2026-0173",
+    # Nothing currently ignored.
+    #
+    # RUSTSEC-2026-0173 (proc-macro-error2, unmaintained) was listed here,
+    # but cargo-deny reports it as `advisory-not-detected`: proc-macro-error2
+    # is not in this crate's graph on any platform. It reaches noyalib only
+    # via the optional `validator` feature, which this crate does not enable
+    # (verified with `cargo tree --all-features -i proc-macro-error2`).
+    #
+    # If a `validator`-enabled path is ever added here, this entry comes back.
 ]
 
 [licenses]
