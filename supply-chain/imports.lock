@@ -23,8 +23,8 @@ user-login = "BurntSushi"
 user-name = "Andrew Gallant"
 
 [[publisher.noyalib]]
-version = "0.0.18"
-when = "2026-07-31"
+version = "0.0.22"
+when = "2026-08-14"
 user-id = 186843
 user-login = "sebastienrousseau"
 user-name = "Sebastien Rousseau"
