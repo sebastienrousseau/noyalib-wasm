@@ -13,6 +13,23 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.23] - 2026-08-16
+
+Lockstep release with `noyalib` 0.0.23. No behaviour change in this
+crate — see the core's `CHANGELOG.md` for what 0.0.23 carries: `remove`
+extended to flow members and sole entries (closing #221), and
+`swap_items` / `move_item` exchanging whole entries so comments travel
+with the item they document (#269).
+
+### Changed
+
+- `noyalib` dependency pin `=0.0.22` -> `=0.0.23`. This crate carries no
+  `cargo-vet` exemption for `noyalib`, so there was nothing to move
+  alongside it.
+- Crate version -> 0.0.23.
+- Lockfile refreshed against the published core. Only `noyalib` moved —
+  no new transitive dependencies, and no broad `cargo update`.
+
 ## [v0.0.22] - 2026-08-13
 
 Lockstep release with `noyalib` 0.0.22. No behaviour change in the JS
