@@ -74,6 +74,36 @@ parent `noyalib` releases:
 3. Software bill of materials (SBOM) attached to each GitHub
    Release.
 
+### Detached GPG signatures
+
+Additive to the sigstore signing above, not a replacement. Keyless
+signing is the stronger primitive — nothing long-lived to steal, and
+every signature publicly logged in Rekor — but verifying it needs
+`cosign` and network access. A detached `.asc` can be checked with the
+`gpg` any distribution already ships, offline, which is what package
+maintainers and air-gapped consumers ask for.
+
+Every `.crate` and the SBOM in a release carry a matching `.asc`:
+
+```sh
+# Import the release-signing key (also in KEYS.asc at the repo root)
+gpg --recv-keys 4B7F16C909C7A8EE9BED338A4F047EDF5F90F638
+
+gpg --verify <artefact>.asc <artefact>
+```
+
+**Release-signing key fingerprint:**
+
+```text
+4B7F16C909C7A8EE9BED338A4F047EDF5F90F638
+```
+
+Signing key `Sebastien Rousseau <sebastian.rousseau@gmail.com>`,
+ed25519, signing-only, expires 2028-08-16. Verify the fingerprint out of
+band before trusting it — a key fetched over the same channel as the
+artefact proves nothing on its own. The sigstore bundle needs no such
+step, which is why it remains the recommended check.
+
 ## Commit Integrity
 
 Every commit on `main` must be signed. CI rejects unsigned pull
