@@ -13,6 +13,29 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.24] - 2026-08-19
+
+Lockstep release with `noyalib` 0.0.24. No behaviour change in this
+crate — see the core's `CHANGELOG.md`: `remove` now takes a sole entry's
+head comment with it (#280), plus a dependency consolidation.
+
+### Changed
+
+- `noyalib` dependency pin `=0.0.23` -> `=0.0.24`. This crate carries no
+  `cargo-vet` exemption for `noyalib`, so there was nothing to move.
+- Crate version -> 0.0.24.
+- Lockfile refreshed against the published core; only `noyalib` moved.
+
+### Fixed
+
+- Release assets now include the detached `.asc` signatures. The signing
+  step produced them and `upload-artifact` carried them, but the
+  `gh release create` call named every asset explicitly and omitted
+  them, so they never reached the release. noyalib v0.0.24 shipped
+  without signatures for this reason; the list is now a `nullglob`
+  array, so the entries disappear when signing is skipped rather than
+  failing the release.
+
 ## [v0.0.23] - 2026-08-16
 
 Lockstep release with `noyalib` 0.0.23. No behaviour change in this
