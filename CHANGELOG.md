@@ -13,6 +13,21 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.26] - 2026-08-20
+
+Lockstep release with `noyalib` 0.0.26. No behaviour change in this
+crate — see the core's `CHANGELOG.md` for @zoosky's wrapped-flow fix
+(#294 / #296): a flow member alone on its line now takes the line with
+it, so removing from a collection wrapped one member per line no longer
+leaves a whitespace-only line behind.
+
+### Changed
+
+- `noyalib` dependency pin `=0.0.25` -> `=0.0.26`. This crate carries no
+  `cargo-vet` exemption for `noyalib`, so there was nothing to move.
+- Crate version -> 0.0.26.
+- Lockfile refreshed against the published core; only `noyalib` moved.
+
 ## [v0.0.25] - 2026-08-20
 
 Lockstep release with `noyalib` 0.0.25. No behaviour change in this
