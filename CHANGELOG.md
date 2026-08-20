@@ -15,9 +15,11 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [v0.0.25] - 2026-08-20
 
-Lockstep release with `noyalib` 0.0.25 — four fixes from @zoosky (#283,
-#285, #288, #290), plus `remove` refusing an alias-valued entry instead
-of silently doing nothing.
+Lockstep release with `noyalib` 0.0.25. No behaviour change in this
+crate — see the core's `CHANGELOG.md` for the four CST editor fixes
+contributed by @zoosky (#283, #285, #288, #290), `remove` refusing an
+alias-valued entry instead of silently doing nothing, and the
+differential-fuzz invariant correction.
 
 ### Changed
 
@@ -25,18 +27,6 @@ of silently doing nothing.
   `cargo-vet` exemption for `noyalib`, so there was nothing to move.
 - Crate version -> 0.0.25.
 - Lockfile refreshed against the published core; only `noyalib` moved.
-
-## [v0.0.25] - 2026-08-20
-
-Lockstep release with `noyalib` 0.0.25. No behaviour change in this
-crate — see the core's `CHANGELOG.md` for the four CST editor fixes
-contributed by @zoosky and the differential-fuzz invariant correction.
-
-### Changed
-
-- `noyalib` dependency pin `=0.0.24` -> `=0.0.25`, with the matching
-  `cargo-vet` exemption moved alongside it.
-- Crate version -> 0.0.25.
 
 ## [v0.0.24] - 2026-08-19
 
