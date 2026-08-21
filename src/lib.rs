@@ -122,6 +122,11 @@
 //! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare, Deno, Bun): [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
 //! - **Browser / Node demos**: [`examples/`](https://github.com/sebastienrousseau/noyalib/tree/main/crates/noyalib-wasm/examples).
 
+#![deny(missing_docs)]
+// Every public item carries documentation. The scorecard probes for this
+// lint rather than for doc-comment density, because a lint is enforced on
+// every build while a count can be satisfied by writing `/// The name.`
+
 #![forbid(unsafe_code)]
 
 pub mod core;
