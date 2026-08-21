@@ -13,6 +13,25 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.27] - 2026-08-21
+
+Lockstep release with `noyalib` 0.0.27. No behaviour change in this
+crate, but the core carries one worth reading: only a **plain** `<<`
+scalar is a merge key now — a quoted `"<<"`, and an alias resolving to
+the string `<<`, are ordinary keys. A document relying on either
+spelling to merge will stop merging, silently. See the core's
+`CHANGELOG.md` for that and for @mathstuf's alias-resolution fix.
+
+### Changed
+
+- `noyalib` dependency pin `=0.0.26` -> `=0.0.27`. This crate carries no
+  `cargo-vet` exemption for `noyalib` and none for itself — it satisfies
+  the core through a `[[trusted.noyalib]]` publisher entry, so what it
+  needed was a refreshed `imports.lock` holding the publisher record for
+  a version published minutes earlier.
+- Crate version -> 0.0.27.
+- Lockfile refreshed against the published core; only `noyalib` moved.
+
 ## [v0.0.26] - 2026-08-20
 
 Lockstep release with `noyalib` 0.0.26. No behaviour change in this
