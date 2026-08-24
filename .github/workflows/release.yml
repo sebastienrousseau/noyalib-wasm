@@ -107,6 +107,14 @@ jobs:
 
       - uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
 
+      # Everything else that carries the version. Added after v0.0.28,
+      # where noyalib-mcp's registry manifests were missed and the
+      # mismatch surfaced only after the tag was pushed. Runnable
+      # locally before tagging: scripts/verify-release-versions.sh
+      - name: Verify every version-bearing file agrees
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: ./scripts/verify-release-versions.sh "${GITHUB_REF_NAME}"
+
       - name: Package crate
         run: cargo package --all-features --allow-dirty
 
