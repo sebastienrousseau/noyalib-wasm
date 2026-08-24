@@ -13,6 +13,15 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.28] - 2026-08-23
+
+Lockstep release with the `noyalib` core. No changes in this crate; the
+version moves so the `=0.0.28` pin resolves.
+
+The core ships two correctness fixes around implicit nulls — inserting
+over one appended a duplicate key, and a `:` at end of input was not
+read as a value indicator. See the core's `CHANGELOG.md` for detail.
+
 ## [v0.0.27] - 2026-08-21
 
 Lockstep release with `noyalib` 0.0.27. No behaviour change in this
