@@ -13,6 +13,25 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+### Added
+
+- **CycloneDX SBOM in the release pipeline** (mirrors the core
+  repo). Releases now emit a machine-readable CycloneDX 1.5
+  `SBOM.cdx.json` — attested (SLSA), sigstore-signed, optionally
+  GPG-signed, and attached to the GitHub Release — alongside the
+  human-readable `SBOM.txt`, which was never a machine-readable
+  SBOM format.
+
+### Fixed
+
+- **A GPG-less release could not publish.** The release asset list
+  relied on `nullglob` to drop the `.asc` entries when GPG signing
+  is skipped, but `artifacts/SBOM.txt.asc` was a literal path —
+  `nullglob` only removes unmatched *patterns* — so
+  `gh release create` failed on the missing file for any fork
+  without the signing key. The entries are spelled as real globs
+  now (mirrors the core repo's fix).
+
 ## [v0.0.28] - 2026-08-23
 
 Lockstep release with the `noyalib` core. No changes in this crate; the
