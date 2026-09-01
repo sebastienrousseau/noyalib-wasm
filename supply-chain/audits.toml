@@ -135,7 +135,7 @@ end = "2027-07-27"
 
 [[trusted.noyalib]]
 criteria = "safe-to-deploy"
-user-id = 186843 # Sebastien Rousseau (sebastienrousseau)
+user-id = 186843
 start = "2026-05-10"
 end = "2027-07-27"
 

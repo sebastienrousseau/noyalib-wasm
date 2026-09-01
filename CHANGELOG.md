@@ -13,6 +13,8 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.29] - 2026-09-01
+
 ### Added
 
 - **CycloneDX SBOM in the release pipeline** (mirrors the core
