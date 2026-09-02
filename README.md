@@ -14,11 +14,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sebastienrousseau/noyalib/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/noyalib/ci.yml?style=for-the-badge&logo=github" alt="Build" /></a>
+  <a href="https://github.com/sebastienrousseau/noyalib-wasm/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/noyalib-wasm/ci.yml?style=for-the-badge&logo=github" alt="Build" /></a>
   <a href="https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/npm/v/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=fc8d62&logo=npm" alt="npm" /></a>
   <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs.rs" /></a>
   <a href="https://bundlephobia.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/bundlephobia/minzip/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=informational" alt="Bundle size" /></a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib-wasm?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
 </p>
 
 ---
@@ -237,17 +237,18 @@ produced it. Verify via:
 npm view @sebastienrousseau/noyalib-wasm provenance
 ```
 
-The underlying `.wasm` is also signed with cosign keyless
-alongside every release; the verify command is identical to
-the source crate's:
+GitHub Releases ship the crate archive and a CycloneDX SBOM,
+each with a sigstore bundle and checksums. A standalone signed
+`.wasm` artefact is not attached to releases; the npm package
+(with its provenance attestation, above) is the distribution
+channel for the compiled bundle. Verify a release artefact:
 
 ```sh
 cosign verify-blob \
-  --certificate-identity-regexp 'https://github.com/sebastienrousseau/noyalib/' \
+  --certificate-identity-regexp 'https://github.com/sebastienrousseau/noyalib-wasm/' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
-  --certificate noyalib_wasm_bg.wasm.pem \
-  --signature   noyalib_wasm_bg.wasm.sig \
-  noyalib_wasm_bg.wasm
+  --bundle <artefact>.bundle \
+  <artefact>
 ```
 
 Full cookbook: [`pkg/VERIFY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/pkg/VERIFY.md).
