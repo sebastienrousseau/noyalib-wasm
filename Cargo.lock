@@ -152,9 +152,9 @@ dependencies = [
 
 [[package]]
 name = "noyalib"
-version = "0.0.29"
+version = "0.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f102aea73ec3023f33cb904bcc59b8f2ac91bce8b77cbe16c14491d117c57b5e"
+checksum = "23d48ffd97a6485043e2d05849188ba375a990a856b3607ce55e585a36ecfbb1"
 dependencies = [
  "hashbrown",
  "indexmap",
@@ -163,7 +163,6 @@ dependencies = [
  "memchr",
  "rustc-hash",
  "ryu",
- "serde",
  "serde_core",
  "serde_ignored",
  "smallvec",
@@ -171,7 +170,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.29"
+version = "0.0.30"
 dependencies = [
  "console_error_panic_hook",
  "noyalib",
