@@ -30,7 +30,7 @@ concurrency:
 
 jobs:
   docs-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@7eab99a87e0a24e34990a93a7ef988b29ee54628
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@a74001c96bed9c22510ae67f55d319040a192cf4
   cargo-deny:
     uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
 
