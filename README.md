@@ -320,6 +320,13 @@ consume the `bundler` target.
 
 ## Documentation
 
+The four entry points, identical across every repo in the family:
+
+- **[User Manual](https://sebastienrousseau.github.io/noyalib/manual/)** — the rendered book: user guide, migrations, architecture, policies, ADRs
+- **[API reference](https://docs.rs/noyalib-wasm)** — rustdoc on docs.rs
+- **[Developer docs](DEVELOPMENT.md)** — this repo's dev entry point, pointing at the family guide
+- **[Ecosystem map](https://github.com/sebastienrousseau/noyalib/blob/main/docs/ECOSYSTEM.md)** — the six crates, the lockstep model, the scorecard
+
 - **Engineering policies** (MSRV, SemVer, security, performance, concurrency, platform support, feature flags):
   [`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md)
 - **Security policy**:
