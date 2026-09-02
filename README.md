@@ -63,7 +63,7 @@ wasm-pack build --release --target bundler
 > released in strict lockstep with the parent
 > [`noyalib`](https://github.com/sebastienrousseau/noyalib) at
 > the same version. See
-> [ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/doc/adr/0005-workspace-split.md)
+> [ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/docs/adr/0005-workspace-split.md)
 > for the rationale and rollback recipe.
 
 ---
@@ -307,7 +307,7 @@ with headroom for the dependency tree. No current dependency *requires*
 1.86 — this crate still compiles on 1.85. The whole lockstep set,
 including the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
 the `Per-crate MSRV` workflow job. The bump policy lives in
-[`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#1-msrv-minimum-supported-rust-version).
+[`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#1-msrv-minimum-supported-rust-version).
 
 **Tier-1 WASM targets** (CI-verified each PR via
 `wasm-pack test --node`): `wasm32-unknown-unknown` produced
@@ -321,13 +321,13 @@ consume the `bundler` target.
 ## Documentation
 
 - **Engineering policies** (MSRV, SemVer, security, performance, concurrency, platform support, feature flags):
-  [`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md)
+  [`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md)
 - **Security policy**:
   [`SECURITY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/SECURITY.md)
 - **JS API reference**:
-  [`doc/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md)
+  [`docs/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md)
 - **Bundling (Vite, Webpack, Next.js, Cloudflare Workers, Deno, Bun)**:
-  [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md)
+  [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md)
 - **npm package**:
   <https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm>
 - **API reference (rustdoc)**: <https://docs.rs/noyalib-wasm>
