@@ -117,3 +117,23 @@ fn core_document_helpers_against_real_doc() {
     assert!(!before.is_empty());
     assert!(inline.is_some());
 }
+
+/// The JS boundary carries locations only inside error message
+/// strings, and downstream tooling (Takazudo/zudo-front-builder's
+/// md-wasm layer) converts those columns to UTF-16 against the
+/// original source. That arithmetic is correct only while noyalib
+/// columns count characters: `é` is one character (and two bytes),
+/// so the error column after it must match the ASCII twin exactly.
+#[test]
+fn error_columns_are_character_based_across_the_boundary() {
+    let multibyte = parse_yaml_to_value("t: \"é\" x\n").unwrap_err().to_string();
+    let ascii = parse_yaml_to_value("t: \"e\" x\n").unwrap_err().to_string();
+    assert!(
+        multibyte.contains("line 1, column 8"),
+        "multibyte error must report the character column: {multibyte}"
+    );
+    assert!(
+        ascii.contains("line 1, column 8"),
+        "ascii twin must report the same column: {ascii}"
+    );
+}

@@ -31,7 +31,7 @@
 //! **Rust 1.85.0** stable. The `wasm-bindgen` 0.2 ecosystem
 //! pulls helpers floored at 1.85; the core `noyalib` library
 //! still builds on **1.75**. See workspace
-//! [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#1-msrv-minimum-supported-rust-version).
+//! [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#1-msrv-minimum-supported-rust-version).
 //!
 //! # Panics
 //!
@@ -81,7 +81,7 @@
 //! the `wasm32-unknown-unknown` target each PR via
 //! `wasm-pack test --node`. Cloudflare Workers, Deno, and Bun
 //! consume the `bundler` target via their own packaging step;
-//! see [`crates/noyalib-wasm/doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
+//! see [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/bundling.md).
 //!
 //! # Performance
 //!
@@ -112,14 +112,14 @@
 //! the JSON shape of a returned object, is held to a 0.x bump
 //! (e.g. 0.0.x → 0.1.0). The Rust library surface (`WasmDocument`,
 //! `core::*`) is covered by the workspace SemVer policy in
-//! [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#2-semver--api-stability).
+//! [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#2-semver--api-stability).
 //! `cargo-semver-checks` runs in CI on every PR.
 //!
 //! # Documentation
 //!
-//! - **Engineering policies** — workspace [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md).
-//! - **JS API reference**: [`doc/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md).
-//! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare, Deno, Bun): [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
+//! - **Engineering policies** — workspace [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md).
+//! - **JS API reference**: [`docs/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md).
+//! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare, Deno, Bun): [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
 //! - **Browser / Node demos**: [`examples/`](https://github.com/sebastienrousseau/noyalib/tree/main/crates/noyalib-wasm/examples).
 
 #![deny(missing_docs)]

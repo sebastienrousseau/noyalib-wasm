@@ -14,11 +14,11 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sebastienrousseau/noyalib/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/noyalib/ci.yml?style=for-the-badge&logo=github" alt="Build" /></a>
+  <a href="https://github.com/sebastienrousseau/noyalib-wasm/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/noyalib-wasm/ci.yml?style=for-the-badge&logo=github" alt="Build" /></a>
   <a href="https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/npm/v/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=fc8d62&logo=npm" alt="npm" /></a>
   <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs.rs" /></a>
   <a href="https://bundlephobia.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/bundlephobia/minzip/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=informational" alt="Bundle size" /></a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib-wasm?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
 </p>
 
 ---
@@ -63,7 +63,7 @@ wasm-pack build --release --target bundler
 > released in strict lockstep with the parent
 > [`noyalib`](https://github.com/sebastienrousseau/noyalib) at
 > the same version. See
-> [ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/doc/adr/0005-workspace-split.md)
+> [ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/docs/adr/0005-workspace-split.md)
 > for the rationale and rollback recipe.
 
 ---
@@ -237,17 +237,18 @@ produced it. Verify via:
 npm view @sebastienrousseau/noyalib-wasm provenance
 ```
 
-The underlying `.wasm` is also signed with cosign keyless
-alongside every release; the verify command is identical to
-the source crate's:
+GitHub Releases ship the crate archive and a CycloneDX SBOM,
+each with a sigstore bundle and checksums. A standalone signed
+`.wasm` artefact is not attached to releases; the npm package
+(with its provenance attestation, above) is the distribution
+channel for the compiled bundle. Verify a release artefact:
 
 ```sh
 cosign verify-blob \
-  --certificate-identity-regexp 'https://github.com/sebastienrousseau/noyalib/' \
+  --certificate-identity-regexp 'https://github.com/sebastienrousseau/noyalib-wasm/' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
-  --certificate noyalib_wasm_bg.wasm.pem \
-  --signature   noyalib_wasm_bg.wasm.sig \
-  noyalib_wasm_bg.wasm
+  --bundle <artefact>.bundle \
+  <artefact>
 ```
 
 Full cookbook: [`pkg/VERIFY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/pkg/VERIFY.md).
@@ -307,7 +308,7 @@ with headroom for the dependency tree. No current dependency *requires*
 1.86 — this crate still compiles on 1.85. The whole lockstep set,
 including the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
 the `Per-crate MSRV` workflow job. The bump policy lives in
-[`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md#1-msrv-minimum-supported-rust-version).
+[`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#1-msrv-minimum-supported-rust-version).
 
 **Tier-1 WASM targets** (CI-verified each PR via
 `wasm-pack test --node`): `wasm32-unknown-unknown` produced
@@ -320,14 +321,21 @@ consume the `bundler` target.
 
 ## Documentation
 
+The four entry points, identical across every repo in the family:
+
+- **[User Manual](https://sebastienrousseau.github.io/noyalib/manual/)** — the rendered book: user guide, migrations, architecture, policies, ADRs
+- **[API reference](https://docs.rs/noyalib-wasm)** — rustdoc on docs.rs
+- **[Developer docs](DEVELOPMENT.md)** — this repo's dev entry point, pointing at the family guide
+- **[Ecosystem map](https://github.com/sebastienrousseau/noyalib/blob/main/docs/ECOSYSTEM.md)** — the six crates, the lockstep model, the scorecard
+
 - **Engineering policies** (MSRV, SemVer, security, performance, concurrency, platform support, feature flags):
-  [`doc/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/doc/POLICIES.md)
+  [`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md)
 - **Security policy**:
   [`SECURITY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/SECURITY.md)
 - **JS API reference**:
-  [`doc/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md)
+  [`docs/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md)
 - **Bundling (Vite, Webpack, Next.js, Cloudflare Workers, Deno, Bun)**:
-  [`doc/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md)
+  [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md)
 - **npm package**:
   <https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm>
 - **API reference (rustdoc)**: <https://docs.rs/noyalib-wasm>

@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+### Changed
+
+- **Repository layout, Phase 1 of the family structure plan**:
+  `doc/` renamed to `docs/`, `DEVELOPMENT.md` added as the developer
+  entry point, `.editorconfig` / `.markdownlint.yaml` /
+  `.codespellrc` land with a per-push `docs-lint` CI gate consuming
+  the core repo's shared-docs-lint.yml.
+
 ## [v0.0.30] - 2026-09-02
 
 ### Changed
@@ -177,7 +185,7 @@ the satellites did not follow. Lockstep resumes here.
 ## Earlier releases
 
 This file starts at `v0.0.22`. `noyalib-wasm` split out of the `noyalib`
-monorepo at **v0.0.12** ([ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/doc/adr/0005-workspace-split.md))
+monorepo at **v0.0.12** ([ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/docs/adr/0005-workspace-split.md))
 and released `v0.0.12` through `v0.0.18` without a crate-local changelog.
 Those releases are documented in:
 
