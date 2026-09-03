@@ -49,7 +49,7 @@ version = "0.3.8"
 criteria = "safe-to-run"
 
 [[exemptions.noyalib]]
-version = "0.0.30"
+version = "0.0.31"
 criteria = "safe-to-deploy"
 
 [[exemptions.wasm-bindgen]]

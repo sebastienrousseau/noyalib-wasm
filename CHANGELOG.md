@@ -13,6 +13,8 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.31] - 2026-09-03
+
 ### Changed
 
 - **Repository layout, Phase 1 of the family structure plan**:
