@@ -140,10 +140,16 @@ fn error_columns_are_character_based_across_the_boundary() {
 
 #[test]
 fn json_model_strips_tags_recursively() {
+    use noyalib::Value;
     let v = noyalib_wasm::core::parse_yaml_to_json_model(
         "a: !!str 1\nb: !local [!!int 2]\nc: !t {d: ~}\n",
     )
     .unwrap();
-    let json = serde_json::to_string(&v).unwrap();
-    assert_eq!(json, r#"{"a":"1","b":[2],"c":{"d":null}}"#);
+    assert_eq!(v["a"], Value::String("1".into()));
+    assert_eq!(v["b"], Value::Sequence(vec![Value::Number(2.into())]));
+    assert!(v["c"]["d"].is_null(), "{v:?}");
+    assert!(
+        !format!("{v:?}").contains("Tagged"),
+        "a tag survived: {v:?}"
+    );
 }
