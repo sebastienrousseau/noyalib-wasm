@@ -26,6 +26,7 @@
 ## Contents
 
 - [Install](#install) — npm, build from source
+- [Requirements](#requirements) — toolchain floor, platforms, the core pin
 - [Quick Start](#quick-start) — parse, edit, validate
 - [Why this approach?](#why-this-approach) — vs `js-yaml`
 - [Surface](#surface) — exported APIs
@@ -67,6 +68,20 @@ wasm-pack build --release --target bundler
 > for the rationale and rollback recipe.
 
 ---
+
+## Requirements
+
+- **Rust 1.86.0 or newer** to build from source: `rust-version` in
+  the manifest, enforced by the `msrv-core` CI job on every push.
+- **Any tier-1 platform.** CI runs the tests on Linux, macOS, and
+  Windows with the stable, beta, and nightly toolchains; stable is the
+  gate, beta and nightly are early warning.
+- **The matching core.** This crate pins `noyalib` at the identical
+  `=0.0.X` and releases in lockstep with it; Cargo resolves that pin
+  for you.
+- **For the bundle**: `wasm-pack` and a JavaScript runtime that loads
+  WebAssembly (browsers, Node.js 18+, Deno, Bun, Cloudflare Workers).
+  `cargo test` needs neither; the pure-Rust core is tested natively.
 
 ## Quick Start
 
