@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Noyalib
+# SPDX-License-Identifier: MIT OR Apache-2.0
+[book]
+title = "The noyalib-wasm Manual"
+description = "noyalib for JavaScript: parse, serialise, and lossless YAML editing through wasm-bindgen."
+authors = ["Sebastien Rousseau"]
+language = "en"
+src = "."
+
+[build]
+build-dir = "../target-book"
+create-missing = false
+
+[output.html]
+git-repository-url = "https://github.com/sebastienrousseau/noyalib-wasm"
+edit-url-template = "https://github.com/sebastienrousseau/noyalib-wasm/edit/main/docs/{path}"
+site-url = "/noyalib-wasm/manual/"

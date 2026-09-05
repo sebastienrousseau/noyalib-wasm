@@ -33,3 +33,5 @@ tarpaulin-report.html
 /debug.rs
 /scratch.*
 crates/noyalib-wasm/Cargo.lock
+# mdBook output (docs/book.toml)
+target-book/

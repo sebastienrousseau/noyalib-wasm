@@ -146,6 +146,9 @@ for fname in ("server.json", "glama.json"):
 # must never ship while it is present (published manifests strip
 # [patch], so the release would depend on an unpublished core).
 manifest_text = (root / "Cargo.toml").read_text(encoding="utf-8")
+for extra in (root / "fuzz" / "Cargo.toml",):
+    if extra.is_file():
+        manifest_text += extra.read_text(encoding="utf-8")
 if "[patch.crates-io]" in manifest_text:
     bad("Cargo.toml", "pre-release [patch.crates-io] present — remove it to cut a release")
 else:

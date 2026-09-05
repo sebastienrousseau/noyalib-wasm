@@ -323,7 +323,7 @@ consume the `bundler` target.
 
 The four entry points, identical across every repo in the family:
 
-- **[User Manual](https://sebastienrousseau.github.io/noyalib/manual/)** — the rendered book: user guide, migrations, architecture, policies, ADRs
+- **[User Manual](https://sebastienrousseau.github.io/noyalib-wasm/manual/)** — this crate's rendered book: its guides, architecture, and release notes; the family manual for the core library is at [https://sebastienrousseau.github.io/noyalib/manual/](https://sebastienrousseau.github.io/noyalib/manual/)
 - **[API reference](https://docs.rs/noyalib-wasm)** — rustdoc on docs.rs
 - **[Developer docs](DEVELOPMENT.md)** — this repo's dev entry point, pointing at the family guide
 - **[Ecosystem map](https://github.com/sebastienrousseau/noyalib/blob/main/docs/ECOSYSTEM.md)** — the six crates, the lockstep model, the scorecard
@@ -333,9 +333,9 @@ The four entry points, identical across every repo in the family:
 - **Security policy**:
   [`SECURITY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/SECURITY.md)
 - **JS API reference**:
-  [`docs/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md)
+  [`docs/js-api.md`](docs/js-api.md)
 - **Bundling (Vite, Webpack, Next.js, Cloudflare Workers, Deno, Bun)**:
-  [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md)
+  [`docs/bundling.md`](docs/bundling.md)
 - **npm package**:
   <https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm>
 - **API reference (rustdoc)**: <https://docs.rs/noyalib-wasm>

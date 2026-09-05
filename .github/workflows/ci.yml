@@ -101,3 +101,36 @@ jobs:
     uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
     with:
       toolchain: "1.86.0"
+
+  fuzz-regression:
+    # Every fuzz target builds on every push, and the seed corpus (plus
+    # any fixed-bug regression inputs under fuzz/regressions/<target>/)
+    # is replayed with -runs=0, so a fixed finding stays fixed.
+    name: fuzz-regression
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    env:
+      CARGO_TARGET_DIR: ${{ github.workspace }}/target-fuzz
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master
+        with:
+          toolchain: nightly
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+        with:
+          workspaces: ". -> target-fuzz"
+          key: fuzz-regression
+      - run: cargo install --locked cargo-fuzz
+      - name: Build every fuzz target
+        run: cargo +nightly fuzz build
+      - name: Replay seed corpus and fixed-bug regressions
+        run: |
+          set -euo pipefail
+          cd fuzz
+          for f in fuzz_targets/*.rs; do
+            t=$(basename "$f" .rs)
+            dirs=(corpus/seed)
+            [ -d "regressions/$t" ] && dirs+=("regressions/$t")
+            echo "── replaying $t against: ${dirs[*]}"
+            cargo +nightly fuzz run "$t" "${dirs[@]}" -- -runs=0
+          done

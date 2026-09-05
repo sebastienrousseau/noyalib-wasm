@@ -17,6 +17,10 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ### Changed
 
+- Repository hygiene for the family standard: the community files
+  (code of conduct, governance, support, agent invariants, citation),
+  `docs/ARCHITECTURE.md`, a rendered manual deployed to Pages, and a
+  seed corpus replayed by CI on every push for the fuzz targets.
 - Lockstep release with noyalib 0.0.33: bracket-quoted path segments
   (core #389), located duplicate-key errors (core #393), and serializer
   fixes for tag-like keys, non-printable characters, and block scalars
