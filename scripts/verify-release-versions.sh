@@ -142,6 +142,15 @@ for fname in ("server.json", "glama.json"):
         (ok if ref.rsplit(":", 1)[1] == version else bad)(f"{fname} image tag", ref)
 
 # The changelog must have promoted this version out of [Unreleased].
+# A committed [patch.crates-io] resolves the pin pre-publish; a tag
+# must never ship while it is present (published manifests strip
+# [patch], so the release would depend on an unpublished core).
+manifest_text = (root / "Cargo.toml").read_text(encoding="utf-8")
+if "[patch.crates-io]" in manifest_text:
+    bad("Cargo.toml", "pre-release [patch.crates-io] present — remove it to cut a release")
+else:
+    ok("Cargo.toml", "no pre-release [patch] section")
+
 changelog = root / "CHANGELOG.md"
 if changelog.is_file():
     if re.search(rf"^## \[v?{re.escape(version)}\]", changelog.read_text(encoding="utf-8"), re.M):

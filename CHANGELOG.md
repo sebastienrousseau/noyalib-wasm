@@ -13,6 +13,15 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.33] - 2026-09-05
+
+### Changed
+
+- Lockstep release with noyalib 0.0.33: bracket-quoted path segments
+  (core #389), located duplicate-key errors (core #393), and serializer
+  fixes for tag-like keys, non-printable characters, and block scalars
+  (core #381, #391, #392). No local code change.
+
 ## [v0.0.32] - 2026-09-03
 
 ### Changed
