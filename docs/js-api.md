@@ -227,7 +227,7 @@ All functions that can fail throw a JS `Error` with a `.message`
 matching the Rust error's `Display` output (e.g.
 `"YAML parse error at line 3, column 7: …"`). The
 `noyalib::Error` variant taxonomy from
-[the core errors reference](../../noyalib/doc/errors.md) is
+[the core errors reference](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib/docs/errors.md) is
 preserved in the message; structured access to the variant kind
 is not currently exposed (file an issue if you need it).
 

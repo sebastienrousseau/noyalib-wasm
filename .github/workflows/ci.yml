@@ -30,24 +30,24 @@ concurrency:
 
 jobs:
   docs-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@a74001c96bed9c22510ae67f55d319040a192cf4
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
   cargo-deny:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
 
   cargo-vet:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
 
   cargo-machete:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
 
   reuse-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
 
   docs-strict:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
 
   verify-signatures:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
 
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
@@ -55,7 +55,7 @@ jobs:
     # exercised end-to-end by wasm-bindgen-test under node (the
     # `wasm-test` job below) rather than by native `cargo test` on
     # macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
@@ -89,7 +89,7 @@ jobs:
     # unreachable by native `cargo test` and is instead gated by the
     # `wasm-test` job above, so it is excluded here rather than
     # counted as an un-fixable coverage hole.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
     with:
       ignore-filename-regex: 'src/lib\.rs'
       fail-under-functions: 96
@@ -98,6 +98,39 @@ jobs:
 
   msrv-core:
     # Verifies the declared 1.86.0 floor actually builds.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@0a0c75faefdd2e1ba5ea06d4fe9b372154a99a6e
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
     with:
       toolchain: "1.86.0"
+
+  fuzz-regression:
+    # Every fuzz target builds on every push, and the seed corpus (plus
+    # any fixed-bug regression inputs under fuzz/regressions/<target>/)
+    # is replayed with -runs=0, so a fixed finding stays fixed.
+    name: fuzz-regression
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    env:
+      CARGO_TARGET_DIR: ${{ github.workspace }}/target-fuzz
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dtolnay/rust-toolchain@6c977a6ca4077a0ceb28ffbe03f59d46e9ac8772 # master
+        with:
+          toolchain: nightly
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+        with:
+          workspaces: ". -> target-fuzz"
+          key: fuzz-regression
+      - run: cargo install --locked cargo-fuzz
+      - name: Build every fuzz target
+        run: cargo +nightly fuzz build
+      - name: Replay seed corpus and fixed-bug regressions
+        run: |
+          set -euo pipefail
+          cd fuzz
+          for f in fuzz_targets/*.rs; do
+            t=$(basename "$f" .rs)
+            dirs=(corpus/seed)
+            [ -d "regressions/$t" ] && dirs+=("regressions/$t")
+            echo "── replaying $t against: ${dirs[*]}"
+            cargo +nightly fuzz run "$t" "${dirs[@]}" -- -runs=0
+          done

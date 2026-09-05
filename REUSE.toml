@@ -13,6 +13,7 @@ version = 1
 # ── Project meta / config files ───────────────────────────────────
 [[annotations]]
 path = [
+    ".devcontainer/devcontainer.json",
     ".editorconfig",
     ".gitattributes",
     ".gitignore",

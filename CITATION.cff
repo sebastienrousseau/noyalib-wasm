@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Noyalib
+# SPDX-License-Identifier: MIT OR Apache-2.0
+cff-version: 1.2.0
+message: "If you use noyalib-wasm in your work, please cite it as below."
+title: noyalib-wasm
+type: software
+authors:
+  - family-names: Rousseau
+    given-names: Sebastien
+    email: sebastian.rousseau@gmail.com
+repository-code: "https://github.com/sebastienrousseau/noyalib-wasm"
+url: "https://github.com/sebastienrousseau/noyalib-wasm"
+license: "Apache-2.0 OR MIT"
+version: 0.0.33
+date-released: "2026-09-05"
+abstract: >-
+  WebAssembly (wasm-bindgen) bindings for the noyalib YAML library. Part of the noyalib YAML 1.2 family for Rust, released in
+  lockstep with the core library.
