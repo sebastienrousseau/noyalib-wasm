@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Null values are JS `null`, not `undefined`.** `parse` (and every
+  other value-returning entry point) serialised `~` / `null` as
+  `undefined`, and `JSON.stringify` drops such properties, so a key with
+  a null value vanished from the JSON entirely. Found through the
+  noyalib.com demo on a document with `empty_field: ~`.
+
 ## [v0.0.33] - 2026-09-05
 
 ### Changed
