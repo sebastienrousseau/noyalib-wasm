@@ -13,6 +13,15 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.34] - 2026-09-05
+
+### Changed
+
+- Lockstep release with noyalib 0.0.34: property tests for the emitter
+  and path grammar, structure-aware and alloc-only fuzzing, the
+  `arbitrary` feature, and an unterminated-verbatim-tag parser fix
+  (core #396). No local code change unless listed below.
+
 ## [v0.0.33] - 2026-09-05
 
 ### Changed
