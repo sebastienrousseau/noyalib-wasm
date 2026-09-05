@@ -30,24 +30,27 @@ concurrency:
 
 jobs:
   docs-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
+  readme-examples:
+    # Every ```rust block in README.md compiles against this crate.
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-readme-examples.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
   cargo-deny:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   cargo-vet:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   cargo-machete:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   reuse-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   docs-strict:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   verify-signatures:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
@@ -55,7 +58,7 @@ jobs:
     # exercised end-to-end by wasm-bindgen-test under node (the
     # `wasm-test` job below) rather than by native `cargo test` on
     # macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
@@ -89,7 +92,7 @@ jobs:
     # unreachable by native `cargo test` and is instead gated by the
     # `wasm-test` job above, so it is excluded here rather than
     # counted as an un-fixable coverage hole.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
     with:
       ignore-filename-regex: 'src/lib\.rs'
       fail-under-functions: 96
@@ -98,7 +101,7 @@ jobs:
 
   msrv-core:
     # Verifies the declared 1.86.0 floor actually builds.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@69dce892f18b0db3ae94c17a9c3c9a65e3327fe8
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
     with:
       toolchain: "1.86.0"
 
