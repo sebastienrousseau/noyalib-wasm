@@ -172,6 +172,7 @@ name = "noyalib-wasm"
 version = "0.0.34"
 dependencies = [
  "console_error_panic_hook",
+ "js-sys",
  "noyalib",
  "serde",
  "serde-wasm-bindgen",

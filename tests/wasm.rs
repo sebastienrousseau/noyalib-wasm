@@ -2,6 +2,7 @@
 // Copyright (c) 2026 Noyalib. All rights reserved.
 
 use noyalib_wasm::*;
+use wasm_bindgen::JsValue;
 use wasm_bindgen_test::*;
 
 #[wasm_bindgen_test]
@@ -146,4 +147,23 @@ fn test_merge_overlays_documents() {
 #[wasm_bindgen_test]
 fn test_merge_invalid_input_errors() {
     assert!(merge("a: [bad\n", "b: 2\n").is_err());
+}
+
+#[wasm_bindgen_test]
+fn parse_keeps_null_values_as_null() {
+    // `undefined` would make JSON.stringify drop the key; `null` survives.
+    let v = parse("a: ~\nb: null\nc: 1\n").unwrap();
+    for key in ["a", "b"] {
+        let got = js_sys::Reflect::get(&v, &JsValue::from_str(key)).unwrap();
+        assert!(got.is_null(), "{key} must be JS null, got {got:?}");
+    }
+    let json = js_sys::JSON::stringify(&v).unwrap();
+    assert_eq!(String::from(json), r#"{"a":null,"b":null,"c":1}"#);
+}
+
+#[wasm_bindgen_test]
+fn parse_json_strips_tags_and_keeps_nulls() {
+    let v = parse_json("a: !!str 1\nb: !local [!!int 2]\nc: ~\n").unwrap();
+    let json = js_sys::JSON::stringify(&v).unwrap();
+    assert_eq!(String::from(json), r#"{"a":"1","b":[2],"c":null}"#);
 }

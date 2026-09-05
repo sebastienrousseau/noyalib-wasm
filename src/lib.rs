@@ -140,9 +140,16 @@ use wasm_bindgen::prelude::*;
 /// - **Mappings** become plain JS Objects (`{ name: 'foo' }`), not the `Map`
 ///   instance `serde_wasm_bindgen`'s default produces. End users overwhelmingly
 ///   expect dot-property access (`value.name`) rather than `.get('name')`.
+/// - **Null** (`~`, `null`, an empty value, `None`) becomes JS `null`,
+///   not `undefined`. `serde_wasm_bindgen`'s default is `undefined`,
+///   and `JSON.stringify` drops a property whose value is `undefined`,
+///   so `a: ~` vanished from `JSON.stringify(parse(yaml))` entirely
+///   (found through the noyalib.com demo).
 /// - Other defaults are preserved.
 fn to_js<T: Serialize + ?Sized>(value: &T) -> Result<JsValue, serde_wasm_bindgen::Error> {
-    let serializer = serde_wasm_bindgen::Serializer::new().serialize_maps_as_objects(true);
+    let serializer = serde_wasm_bindgen::Serializer::new()
+        .serialize_maps_as_objects(true)
+        .serialize_missing_as_null(true);
     value.serialize(&serializer)
 }
 
@@ -284,6 +291,16 @@ impl WasmDocument {
 #[wasm_bindgen]
 pub fn parse(yaml: &str) -> Result<JsValue, JsError> {
     let value = core::parse_yaml_to_value(yaml).map_err(|e| JsError::new(&e.to_string()))?;
+    to_js(&value).map_err(|e| JsError::new(&e.to_string()))
+}
+
+/// Parse YAML and return the JSON data model: like [`parse`], but every
+/// tag is stripped recursively, so the result is exactly what the YAML
+/// test suite's expected JSON is and what a JSON consumer expects.
+/// `parse` keeps tags as `{"!tag": value}` for callers that need them.
+#[wasm_bindgen(js_name = parseJson)]
+pub fn parse_json(yaml: &str) -> Result<JsValue, JsError> {
+    let value = core::parse_yaml_to_json_model(yaml).map_err(|e| JsError::new(&e.to_string()))?;
     to_js(&value).map_err(|e| JsError::new(&e.to_string()))
 }
 

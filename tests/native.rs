@@ -137,3 +137,13 @@ fn error_columns_are_character_based_across_the_boundary() {
         "ascii twin must report the same column: {ascii}"
     );
 }
+
+#[test]
+fn json_model_strips_tags_recursively() {
+    let v = noyalib_wasm::core::parse_yaml_to_json_model(
+        "a: !!str 1\nb: !local [!!int 2]\nc: !t {d: ~}\n",
+    )
+    .unwrap();
+    let json = serde_json::to_string(&v).unwrap();
+    assert_eq!(json, r#"{"a":"1","b":[2],"c":{"d":null}}"#);
+}
