@@ -22,6 +22,10 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
   `arbitrary` feature, and an unterminated-verbatim-tag parser fix
   (core #396). No local code change unless listed below.
 
+- yaml-test-suite conformance gate: `tests/yaml_test_suite.rs` drives all
+  406 official cases through this crate's own entry point and CI runs it
+  via the family's shared `yaml-test-suite` workflow, so the surface
+  cannot drift from the core (which passes 406/406).
 ### Added
 
 - **`parseJson(yaml)`**: the JSON data model, every tag stripped
