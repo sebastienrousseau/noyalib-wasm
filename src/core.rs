@@ -29,6 +29,15 @@ pub fn parse_yaml_to_value(yaml: &str) -> noyalib::Result<Value> {
     noyalib::from_str(yaml)
 }
 
+/// Parse a document and project it onto the JSON data model: every
+/// tag is stripped recursively, so `!!binary R0lG...` is the string and
+/// `!local [1]` is the sequence. This is what `JSON.stringify` of the
+/// parsed document should show, and what the YAML test suite's expected
+/// JSON is; `parse_yaml_to_value` keeps tags as `{"!tag": value}`.
+pub fn parse_yaml_to_json_model(yaml: &str) -> noyalib::Result<Value> {
+    noyalib::from_str::<Value>(yaml).map(Value::untag)
+}
+
 /// Serialise a [`Value`] tree back to YAML text.
 ///
 /// # Examples
