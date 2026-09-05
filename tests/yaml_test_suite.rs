@@ -5,8 +5,8 @@
 //! cases through THIS crate so its surface cannot drift from the
 //! core. The suite directory comes from `NOYALIB_SUITE_DIR` (set by
 //! the family's shared `yaml-test-suite` workflow); locally it falls
-//! back to a sibling core checkout. In CI a missing suite is a
-//! failure, never a silent skip.
+//! back to a sibling core checkout; without either it skips (the
+//! shared workflow always sets the variable, so the gate cannot skip).
 
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 
@@ -72,10 +72,11 @@ fn suite_dir() -> Option<PathBuf> {
     if sibling.is_dir() {
         return Some(sibling);
     }
-    assert!(
-        std::env::var_os("CI").is_none(),
-        "NOYALIB_SUITE_DIR is not set and no sibling core checkout exists"
-    );
+    // Only the family's shared `yaml-test-suite` workflow provides the
+    // suite; every other CI job (test matrix, coverage, MSRV) runs the
+    // whole test binary without it and must not fail here. The gate
+    // itself cannot skip: when NOYALIB_SUITE_DIR is set, `load_cases`
+    // panics on a missing or short suite.
     eprintln!("yaml-test-suite: no suite directory found, skipping (set NOYALIB_SUITE_DIR)");
     None
 }
