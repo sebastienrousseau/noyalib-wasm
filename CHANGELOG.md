@@ -13,6 +13,30 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.34] - 2026-09-05
+
+### Changed
+
+- Lockstep release with noyalib 0.0.34: property tests for the emitter
+  and path grammar, structure-aware and alloc-only fuzzing, the
+  `arbitrary` feature, and an unterminated-verbatim-tag parser fix
+  (core #396). No local code change unless listed below.
+
+### Added
+
+- **`parseJson(yaml)`**: the JSON data model, every tag stripped
+  recursively; `parse` keeps tags as `{"!tag": value}`. The YAML test
+  suite's 406 cases pass through `parseJson` (single-document ones; the
+  suite's multi-document streams are outside `parse`'s contract).
+
+### Fixed
+
+- **Null values are JS `null`, not `undefined`.** `parse` (and every
+  other value-returning entry point) serialised `~` / `null` as
+  `undefined`, and `JSON.stringify` drops such properties, so a key with
+  a null value vanished from the JSON entirely. Found through the
+  noyalib.com demo on a document with `empty_field: ~`.
+
 ## [v0.0.33] - 2026-09-05
 
 ### Changed

@@ -60,6 +60,15 @@ JSON-compatible values (no tags, no anchors, no non-string
 mapping keys). Used for "is this YAML safe to round-trip through
 `JSON.stringify`?" checks.
 
+### `parseJson(yaml: string): unknown`
+
+Like `parse`, but the result is the JSON data model: every tag is
+stripped recursively, so `!!binary R0lG...` is the string and
+`!local [1]` is the array. This is what the YAML test suite's expected
+JSON is, and what a JSON consumer expects; `parse` keeps tags as
+`{ "!tag": value }` for callers that need them. Null values are JS
+`null` in both.
+
 ### `getPath(yaml: string, path: string): unknown | null`
 
 Fetch a single value from a YAML string by dotted path. Returns
