@@ -13,6 +13,26 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.38] - 2026-09-06
+
+### Added
+
+- **The ultra-complex fixture through the JSON model** (`tests/fixtures/ultra-complex/`),
+  natively and in Node through `parseJson`, projects onto exactly its
+  expected JSON. The README names and links the official yaml-test-suite.
+
+### Changed
+
+- Lockstep release with noyalib 0.0.38: the Scorecard pinned-dependency
+  fixes across the family. No local code change unless listed below.
+
+### Fixed
+
+- **The release no longer runs `npm install -g npm@latest`.** It asserts
+  that the runner's npm already supports OIDC trusted publishing
+  (npm 11.5.1 or newer) and fails otherwise. Scorecard reported the
+  upgrade as an unpinned dependency (alert #10).
+
 ## [v0.0.37] - 2026-09-06
 
 ### Changed

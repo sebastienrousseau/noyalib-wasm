@@ -359,6 +359,17 @@ The four entry points, identical across every repo in the family:
 
 ---
 
+## Conformance
+
+Every push runs the official [yaml-test-suite](https://github.com/yaml/yaml-test-suite)
+through this crate's own JSON model, from the same vendored suite and the same
+core commit as the `noyalib` core: 382 of 382 single-document cases (the 24
+multi-document cases are outside `parse`, which is single-document). The core
+itself passes 406 of 406 with no skip list. A two-document configuration that
+uses most of YAML at once (`tests/fixtures/ultra-complex/`) is also parsed to
+exactly its expected JSON, natively and in Node. Details and the family table:
+[noyalib.com/conformance](https://noyalib.com/conformance/).
+
 ## License
 
 Dual-licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)

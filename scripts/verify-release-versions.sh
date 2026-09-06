@@ -146,6 +146,16 @@ for fname in ("server.json", "glama.json"):
 # must never ship while it is present (published manifests strip
 # [patch], so the release would depend on an unpublished core).
 manifest_text = (root / "Cargo.toml").read_text(encoding="utf-8")
+# The exact core pin must name this crate's own version: a 0.0.38 crate
+# that depends on core 0.0.37 is not a lockstep release (the bump sed
+# missed it once; CI built against the published core and nobody noticed).
+pin = re.search(r'^noyalib\s*=\s*\{[^}]*version\s*=\s*"=([0-9.]+)"', manifest_text, re.M)
+if pin is None:
+    bad("Cargo.toml", "no exact noyalib core pin (`noyalib = { version = \"=X.Y.Z\", ... }`)")
+elif wanted and pin.group(1) != wanted:
+    bad("Cargo.toml", f"core pin ={pin.group(1)} != {wanted}")
+else:
+    ok("Cargo.toml", f"core pinned to ={pin.group(1)}")
 for extra in (root / "fuzz" / "Cargo.toml",):
     if extra.is_file():
         manifest_text += extra.read_text(encoding="utf-8")
