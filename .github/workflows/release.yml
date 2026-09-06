@@ -450,7 +450,7 @@ jobs:
 
       - uses: jetli/wasm-pack-action@0d096b08b4e5a7de8c28de67e11e945404e9eefa # v0.4.0
         with:
-          version: 'latest'
+          version: 'v0.15.0'
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -466,7 +466,16 @@ jobs:
 
       - name: Build (wasm-pack)
         run: |
+          wasm-pack --version
           wasm-pack build --release --target bundler --scope sebastienrousseau
+
+      # The 0.0.35 package shipped without noyalib_wasm_bg.js: the action's
+      # "latest" resolved to wasm-pack 0.9.1, whose `files` list predates the
+      # bundler layout, so the entry module imported a file the tarball did
+      # not carry. Refuse to publish a package whose entry imports anything
+      # the tarball leaves out.
+      - name: Gate the package contents
+        run: scripts/check-npm-package.sh pkg
 
       - name: Publish (Trusted Publishing + provenance)
         run: |
