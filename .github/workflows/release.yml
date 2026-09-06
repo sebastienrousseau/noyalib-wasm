@@ -457,12 +457,18 @@ jobs:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
 
-      # npm OIDC Trusted Publishing for the *publish* (not just provenance)
-      # requires npm >= 11.5.1. Node 24 ships npm 11.x; upgrade explicitly
-      # to be certain — otherwise the publish PUT is unauthenticated and
-      # npm returns E404 on the scoped package (the earlier v0.0.15 failure).
-      - name: Ensure npm supports OIDC Trusted Publishing
-        run: npm install -g npm@latest
+      # npm OIDC Trusted Publishing for the publish (not just provenance)
+      # requires npm >= 11.5.1. Node 24 ships a newer npm; assert it rather
+      # than run an unpinned `npm install -g npm@latest` (Scorecard flags
+      # any npm install without a lockfile as an unpinned dependency).
+      - name: Assert npm supports OIDC Trusted Publishing (>= 11.5.1)
+        run: |
+          node -e '
+            const v = require("child_process").execSync("npm --version").toString().trim();
+            const [a, b, c] = v.split(".").map(Number);
+            const ok = a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1)));
+            console.log(`npm ${v}: ${ok ? "supports" : "does NOT support"} OIDC trusted publishing`);
+            if (!ok) process.exit(1);'
 
       - name: Build (wasm-pack)
         run: |
