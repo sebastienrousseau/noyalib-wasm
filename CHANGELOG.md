@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.36] - 2026-09-06
+
+### Changed
+
+- Lockstep release with noyalib 0.0.36: stream parse errors located in
+  the stream (core #408) and jsonschema 0.53 (core #405). No local code
+  change unless listed below.
+
 ## [v0.0.35] - 2026-09-06
 
 ### Changed
