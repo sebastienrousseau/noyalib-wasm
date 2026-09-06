@@ -13,6 +13,15 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.37] - 2026-09-06
+
+### Changed
+
+- Lockstep release with noyalib 0.0.37: the line opened for the
+  noyalib-wasm npm package gate repair (its 0.0.36 npm publish failed
+  inside the gate under npm 12). No local code change unless listed
+  below.
+
 ## [v0.0.36] - 2026-09-06
 
 ### Changed
