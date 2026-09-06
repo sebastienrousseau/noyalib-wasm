@@ -44,3 +44,12 @@ wasm-opt = false
 # the dep — disabling it would lose the readable JS-side
 # stack-trace integration.
 ignored = ["console_error_panic_hook"]
+
+# ── Pre-release resolution ─────────────────────────────────────────
+# The `=0.0.38` lockstep pin resolves only against the *published*
+# core. Until that release lands on crates.io, resolve it from the
+# core's release branch so CI and local builds work. REMOVE at the
+# v0.0.38 cut — the release validation must refuse to tag while this
+# section is present.
+[patch.crates-io]
+noyalib = { git = "https://github.com/sebastienrousseau/noyalib", branch = "feat/v0.0.38" }

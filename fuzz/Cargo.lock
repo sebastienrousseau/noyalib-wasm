@@ -383,3 +383,8 @@ checksum = "7ef64dbcc55df09c7e5a46182d181c2cfa3e925f3da937ea764728b4bbb9dcbf"
 dependencies = [
  "unicode-ident",
 ]
+
+[[patch.unused]]
+name = "noyalib"
+version = "0.0.38"
+source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.38#ba9d824d6bed385dbb78db5905b60d7612aca45d"

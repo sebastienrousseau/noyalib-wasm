@@ -13,6 +13,13 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.38] - 2026-09-06
+
+### Changed
+
+- Lockstep release with noyalib 0.0.38: the Scorecard pinned-dependency
+  fixes across the family. No local code change unless listed below.
+
 ## [v0.0.37] - 2026-09-06
 
 ### Changed
