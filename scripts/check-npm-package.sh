@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Copyright (c) 2026 Noyalib. All rights reserved.
 # Refuse an npm package whose entry module imports a file the tarball
 # leaves out. wasm-pack writes the `files` allow-list from what it knows
 # about the target's layout; an old wasm-pack paired with a new
