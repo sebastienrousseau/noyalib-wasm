@@ -14,7 +14,8 @@
 use noyalib_wasm::WasmDocument;
 use noyalib_wasm::core::{
     document_comments_at, document_get_source, document_get_value, document_span_at, merge_yaml,
-    parse_yaml_to_value, validate_yaml_json, value_to_yaml, yaml_get_path, yaml_round_trip,
+    parse_yaml_to_json_model, parse_yaml_to_value, validate_yaml_json, value_to_yaml,
+    yaml_get_path, yaml_round_trip,
 };
 
 // ── WasmDocument lifecycle (JsValue-free surface) ──────────────────────
@@ -152,4 +153,17 @@ fn json_model_strips_tags_recursively() {
         !format!("{v:?}").contains("Tagged"),
         "a tag survived: {v:?}"
     );
+}
+
+/// Document 2 of the core's ultra-complex fixture projects onto exactly
+/// its expected JSON through the JSON model the playground uses.
+#[test]
+fn ultra_complex_fixture_projects_onto_the_expected_json() {
+    let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/ultra-complex");
+    let yaml = std::fs::read_to_string(dir.join("valid.yaml")).unwrap();
+    let doc2 = &yaml[yaml.find("---\n# Document 2").expect("document 2")..];
+    let expected: Vec<serde_json::Value> =
+        serde_json::from_str(&std::fs::read_to_string(dir.join("valid.json")).unwrap()).unwrap();
+    let got = parse_yaml_to_json_model(doc2).expect("parses");
+    assert_eq!(serde_json::to_value(got).unwrap(), expected[1]);
 }

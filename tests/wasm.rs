@@ -167,3 +167,17 @@ fn parse_json_strips_tags_and_keeps_nulls() {
     let json = js_sys::JSON::stringify(&v).unwrap();
     assert_eq!(String::from(json), r#"{"a":"1","b":[2],"c":null}"#);
 }
+
+/// Document 2 of the core's ultra-complex fixture through `parseJson`,
+/// the call the playground makes, compared as JSON (key order aside).
+#[wasm_bindgen_test]
+fn parse_json_projects_the_ultra_complex_fixture() {
+    let yaml = include_str!("fixtures/ultra-complex/valid.yaml");
+    let doc2 = &yaml[yaml.find("---\n# Document 2").expect("document 2")..];
+    let expected: Vec<serde_json::Value> =
+        serde_json::from_str(include_str!("fixtures/ultra-complex/valid.json")).unwrap();
+    let value = noyalib_wasm::parse_json(doc2).expect("parses");
+    let text = js_sys::JSON::stringify(&value).expect("stringify");
+    let got: serde_json::Value = serde_json::from_str(&String::from(text)).unwrap();
+    assert_eq!(got, expected[1]);
+}
