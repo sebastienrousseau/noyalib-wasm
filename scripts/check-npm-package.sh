@@ -10,7 +10,13 @@ pkg=${1:-pkg}
 cd "$pkg"
 entry=$(node -e 'const p=require("./package.json");console.log(p.module||p.main)')
 [ -f "$entry" ] || { echo "entry module $entry missing"; exit 1; }
-packed=$(npm pack --dry-run --json 2>/dev/null | node -e 'const d=JSON.parse(require("fs").readFileSync(0,"utf8"));for(const f of d[0].files)console.log(f.path)')
+# npm 11 prints an array, npm 12 an object keyed by package name.
+packed=$(npm pack --dry-run --json 2>/dev/null | node -e '
+const d=JSON.parse(require("fs").readFileSync(0,"utf8"));
+const first=Array.isArray(d)?d[0]:Object.values(d)[0];
+if(!first||!Array.isArray(first.files)){console.error("unexpected npm pack --json shape");process.exit(2);}
+for(const f of first.files)console.log(f.path)')
+[ -n "$packed" ] || { echo "npm pack --dry-run --json listed no files"; exit 1; }
 rc=0
 for imp in $(grep -oE 'from "\./[^"]+"' "$entry" | sed -E 's/from "\.\/([^"]+)"/\1/' | sort -u); do
   [ -f "$imp" ] || { echo "$entry imports $imp, which was not generated"; rc=1; continue; }

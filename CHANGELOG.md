@@ -22,6 +22,15 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
   inside the gate under npm 12). No local code change unless listed
   below.
 
+### Fixed
+
+- **The npm package gate reads npm 12's `npm pack --json`.** The 0.0.36
+  npm publish failed inside the gate: npm 12 on the runner returns an
+  object keyed by package name where npm 11 returned an array. The gate
+  now accepts both shapes and refuses an empty listing; it is tested
+  under npm 11.19 and npm 12.0. The 0.0.36 crate and GitHub release are
+  intact; the npm package resumes at 0.0.37.
+
 ## [v0.0.36] - 2026-09-06
 
 ### Changed
