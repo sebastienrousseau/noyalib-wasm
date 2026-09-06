@@ -511,4 +511,4 @@ checksum = "29666d0abbfad1e3dc4dcf6144730dd3a3ab225bbbdac83319345b1b44ccfc1b"
 [[patch.unused]]
 name = "noyalib"
 version = "0.0.38"
-source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.38#ba9d824d6bed385dbb78db5905b60d7612aca45d"
+source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.38#fdc9e8477d2d776456fbb8bb0546a01652dc6b0d"
