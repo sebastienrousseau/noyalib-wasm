@@ -13,6 +13,18 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+### Fixed
+
+- **The npm package is gated before it is published.** The 0.0.35
+  package shipped without `noyalib_wasm_bg.js`: the release workflow
+  asked the wasm-pack action for "latest", which resolved to wasm-pack
+  0.9.1 that day, and its `files` allow-list predates the bundler
+  layout, so the entry module imported a file the tarball did not
+  carry. wasm-pack is now pinned to 0.15.0 in CI and in the release,
+  and `scripts/check-npm-package.sh` refuses a package whose entry
+  imports anything `npm pack` would leave out. Consumers of 0.0.35
+  should move to 0.0.36.
+
 ## [v0.0.36] - 2026-09-06
 
 ### Changed
