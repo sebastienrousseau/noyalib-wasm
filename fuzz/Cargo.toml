@@ -30,8 +30,3 @@ path = "fuzz_targets/fuzz_document_path.rs"
 test = false
 doc = false
 bench = false
-
-# Pre-release: the parent manifest's git patch, until the cut removes
-# both (scripts/verify-release-versions.sh checks this file too).
-[patch.crates-io]
-noyalib = { git = "https://github.com/sebastienrousseau/noyalib", branch = "feat/v0.0.37" }
