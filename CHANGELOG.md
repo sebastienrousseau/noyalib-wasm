@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.41] - 2026-09-07
+
+### Changed
+
+- Lockstep release with noyalib 0.0.41: the September GitHub
+  Actions bumps, cherry-picked from Dependabot with authorship intact.
+  No local code change unless listed below.
+
 ## [v0.0.40] - 2026-09-07
 
 ### Changed
