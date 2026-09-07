@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.39] - 2026-09-07
+
+### Changed
+
+- Lockstep release with noyalib 0.0.39: fifteen spec-torture
+  documents and the three parser defects they found. No local code
+  change unless listed below.
+
 ## [v0.0.38] - 2026-09-06
 
 ### Added
