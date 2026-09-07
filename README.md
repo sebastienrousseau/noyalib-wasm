@@ -19,6 +19,7 @@
   <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs.rs" /></a>
   <a href="https://bundlephobia.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/bundlephobia/minzip/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=informational" alt="Bundle size" /></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib-wasm?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
+  <a href="https://www.bestpractices.dev/projects/14494"><img src="https://img.shields.io/cii/level/14494?style=for-the-badge&label=OpenSSF%20Best%20Practices&logo=openssf" alt="OpenSSF Best Practices" /></a>
 </p>
 
 ---
