@@ -152,9 +152,8 @@ dependencies = [
 
 [[package]]
 name = "noyalib"
-version = "0.0.39"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9df43acfb5d16214a4f78e184707822141edfcd430a38a58ceb40067ba521290"
+version = "0.0.40"
+source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.40#4ef096d05b7c5c4406ecfc7c61098326cdc00a39"
 dependencies = [
  "hashbrown",
  "indexmap",
@@ -170,7 +169,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.39"
+version = "0.0.40"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",

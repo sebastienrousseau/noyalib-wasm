@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.40] - 2026-09-07
+
+### Changed
+
+- Lockstep release with noyalib 0.0.40: this crate is now
+  registered on bestpractices.dev and passing at 100%, and the README
+  carries its badge. No local code change unless listed below.
+
 ## [v0.0.39] - 2026-09-07
 
 ### Changed
