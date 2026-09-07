@@ -153,7 +153,7 @@ dependencies = [
 [[package]]
 name = "noyalib"
 version = "0.0.40"
-source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.40#4ef096d05b7c5c4406ecfc7c61098326cdc00a39"
+source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.40#d796cd0f956bd1bd6dfad5f9b56f81cad7e71a65"
 dependencies = [
  "hashbrown",
  "indexmap",
