@@ -154,9 +154,9 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "noyalib"
-version = "0.0.42"
+version = "0.0.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9fa04292d959e202029196df253cb3f4e9e20f659d6727298bb3903c4948b5a6"
+checksum = "55f03682003f288e23f94d8f6222de0dcf15c77329b5e42b2f37421243c1d373"
 dependencies = [
  "hashbrown",
  "indexmap",
@@ -172,7 +172,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.42"
+version = "0.0.43"
 dependencies = [
  "noyalib",
  "serde",

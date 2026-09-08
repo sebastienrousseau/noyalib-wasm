@@ -13,6 +13,14 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [Unreleased]
 
+## [v0.0.43] - 2026-09-08
+
+### Changed
+
+- Lockstep release with noyalib 0.0.43: a hardening pass on the
+  VS Code extension publish step. No local code change unless listed
+  below.
+
 ## [v0.0.42] - 2026-09-08
 
 ### Changed
