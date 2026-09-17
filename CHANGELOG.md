@@ -11,7 +11,18 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
-## [Unreleased]
+## [v0.0.44] - 2026-09-17
+
+### Changed
+
+- Tracks `noyalib` 0.0.44. The core release fixes a serializer defect
+  that moved a struct's fields up a level when it was wrapped in
+  `SpaceAfter` or `Commented`, producing valid YAML that meant something
+  else. These bindings serialise through noyalib, so the fix arrives via
+  the version pin; no source change here.
+
+  See the core crate's `CHANGELOG.md` for the full release notes.
+
 
 ## [v0.0.43] - 2026-09-08
 
