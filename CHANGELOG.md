@@ -11,6 +11,17 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.45] - 2026-09-18
+
+### Changed
+
+- Tracks `noyalib` 0.0.45. The core release fixes CST edit defects
+  reachable from `WasmDocument`'s `set`, `setValue` and `replaceSpan`,
+  including a fragment that could shadow a sibling with a duplicate key.
+  The fixes arrive via the version pin; no source change.
+
+  See the core crate's `CHANGELOG.md` for the full release notes.
+
 ## [v0.0.44] - 2026-09-17
 
 ### Changed
