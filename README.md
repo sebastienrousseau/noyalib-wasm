@@ -1,377 +1,218 @@
 <!-- SPDX-License-Identifier: Apache-2.0 OR MIT -->
 
 <p align="center">
-  <img src="https://cloudcdn.pro/noyalib/v1/logos/noyalib.svg" alt="Noyalib logo" width="128" />
+  <img src="https://cloudcdn.pro/noyalib/v1/logos/noyalib.svg" alt="noyalib-wasm logo" width="128" />
 </p>
 
 <h1 align="center">noyalib-wasm</h1>
 
 <p align="center">
-  <strong><code>wasm-bindgen</code> wrapper around noyalib —
-  pure-Rust YAML 1.2, zero <code>unsafe</code>, ~338 KB after
-  LTO. Runs in browsers, Node, Cloudflare Workers, Deno, and
-  any other WASM-capable host.</strong>
+  Browser and JavaScript bindings for YAML 1.2 parsing and lossless editing.
 </p>
 
 <p align="center">
   <a href="https://github.com/sebastienrousseau/noyalib-wasm/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/noyalib-wasm/ci.yml?style=for-the-badge&logo=github" alt="Build" /></a>
-  <a href="https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/npm/v/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=fc8d62&logo=npm" alt="npm" /></a>
-  <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs.rs" /></a>
-  <a href="https://bundlephobia.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/bundlephobia/minzip/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=informational" alt="Bundle size" /></a>
+  <a href="https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/npm/v/@sebastienrousseau/noyalib-wasm?style=for-the-badge&color=fc8d62&logo=npm" alt="Registry" /></a>
+  <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs" /></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib-wasm?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
-  <a href="https://www.bestpractices.dev/projects/14494"><img src="https://img.shields.io/cii/level/14494?style=for-the-badge&label=OpenSSF%20Best%20Practices&logo=openssf" alt="OpenSSF Best Practices" /></a>
+  <a href="LICENSE-APACHE"><img src="https://img.shields.io/badge/license-Apache--2.0%20OR%20MIT-blue.svg?style=for-the-badge" alt="License: Apache-2.0 OR MIT" /></a>
+  <a href="https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/POLICIES.md"><img src="https://img.shields.io/badge/MSRV-1.86.0-93450a.svg?style=for-the-badge&logo=rust" alt="MSRV 1.86.0" /></a>
 </p>
 
 ---
 
 ## Contents
 
-- [Install](#install) — npm, build from source
-- [Requirements](#requirements) — toolchain floor, platforms, the core pin
-- [Quick Start](#quick-start) — parse, edit, validate
-- [Why this approach?](#why-this-approach) — vs `js-yaml`
-- [Surface](#surface) — exported APIs
-- [Bundle size](#bundle-size) — what you ship to users
-- [Targets](#targets) — every wasm-pack flavour
-- [Provenance](#provenance) — npm + cosign
-- [Examples](#examples) — Node + browser demos
-- [When not to use noyalib-wasm](#when-not-to-use-noyalib-wasm)
-- [Documentation](#documentation)
+**Getting started**
+
+- [Install](#install) — npm-compatible package managers and source builds
+- [Requirements](#requirements) — toolchain floor, runtimes
+- [Quick Start](#quick-start) — parse, inspect, and edit YAML
+
+**The noyalib-wasm ecosystem**
+
+- [The noyalib-wasm ecosystem](#the-noyalib-wasm-ecosystem) — bindings and companion tools
+
+**Library reference**
+
+- [Capabilities at a glance](#capabilities-at-a-glance) — the current surface by theme
+- [Ecosystem comparison](#ecosystem-comparison) — short matrix; full table at [`docs/COMPARISON.md`](docs/COMPARISON.md)
+- [Benchmarks](#benchmarks) — harness and bundle measurements; full table at [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md)
+- [Features](#features) — JavaScript exports
+- [Configuration](#configuration) — wasm-pack targets and build modes
+- [Examples](#examples) — browser and Node examples
+
+**Operational**
+
+- [When not to use noyalib-wasm](#when-not-to-use-noyalib-wasm) — limitations
+- [Development](#development) — make targets, WASM tests, CI
+- [Security](#security) — guarantees and compliance
+- [Documentation](#documentation) — all reference docs
+- [Stability guarantees](#stability-guarantees) — JavaScript API, SemVer, and toolchain discipline
 - [License](#license)
 
 ---
 
 ## Install
 
-```sh
-npm install @sebastienrousseau/noyalib-wasm
-# or
-pnpm add @sebastienrousseau/noyalib-wasm
-# or
-yarn add @sebastienrousseau/noyalib-wasm
+### As a JavaScript library
+
+```bash
+npm install @sebastienrousseau/noyalib-wasm@0.0.46
 ```
 
-Or build from source against any wasm-pack target:
+`pnpm add` and `yarn add` work with the same package. To build from source:
 
-```sh
-git clone https://github.com/sebastienrousseau/noyalib-wasm
-cd noyalib-wasm
+```bash
 wasm-pack build --release --target bundler
 ```
 
-> **Split from the monorepo since v0.0.12.** Prior versions
-> shipped from `sebastienrousseau/noyalib/crates/noyalib-wasm/`.
-> From v0.0.12 onward `noyalib-wasm` lives here as its own crate,
-> released in strict lockstep with the parent
-> [`noyalib`](https://github.com/sebastienrousseau/noyalib) at
-> the same version. See
-> [ADR-0005](https://github.com/sebastienrousseau/noyalib/blob/main/docs/adr/0005-workspace-split.md)
-> for the rationale and rollback recipe.
-
----
-
 ## Requirements
 
-- **Rust 1.86.0 or newer** to build from source: `rust-version` in
-  the manifest, enforced by the `msrv-core` CI job on every push.
-- **Any tier-1 platform.** CI runs the tests on Linux, macOS, and
-  Windows with the stable, beta, and nightly toolchains; stable is the
-  gate, beta and nightly are early warning.
-- **The matching core.** This crate pins `noyalib` at the identical
-  `=0.0.X` and releases in lockstep with it; Cargo resolves that pin
-  for you.
-- **For the bundle**: `wasm-pack` and a JavaScript runtime that loads
-  WebAssembly (browsers, Node.js 18+, Deno, Bun, Cloudflare Workers).
-  `cargo test` needs neither; the pure-Rust core is tested natively.
+- Rust **1.86.0 or newer** and `wasm-pack` when building from source.
+- A WebAssembly-capable browser, Node.js, Deno, Bun, or edge runtime.
+- The crate pins `noyalib` at exactly `=0.0.46` under the lockstep contract.
+
+| Surface | Minimum | Enforcement |
+| :--- | :---: | :--- |
+| Rust crate | Rust 1.86.0 | manifest and MSRV CI |
+| JavaScript package | WebAssembly runtime | Node and browser CI |
 
 ## Quick Start
 
 ```js
-import init, {
-  parse,
-  stringify,
-  validateJson,
-  getPath,
-  merge,
-  WasmDocument,
-} from "@sebastienrousseau/noyalib-wasm";
+import init, { parse, getPath, WasmDocument } from "@sebastienrousseau/noyalib-wasm";
 
-await init();          // load the WASM blob
+await init();
 
-// Plain parse / stringify — like js-yaml. Mappings come back as
-// plain JS Objects (not `Map`), so dotted property access works.
-const obj = parse("host: api.example.com\nport: 8080\n");
-console.log(obj.host); // "api.example.com"
-const yaml = stringify(obj);
+const value = parse("host: api.example.com\nport: 8080\n");
+const port = getPath("port: 8080\n", "port");
 
-// Indexed read without going through `parse`.
-const port = getPath("host: api.example.com\nport: 8080\n", "port"); // 8080
-
-// JSON-compatible YAML 1.2 schema check.
-validateJson("a: 1\nb: [2, 3]\n"); // true
-
-// Lossless CST edit — comments + indentation preserved.
-const doc = new WasmDocument(source);
-doc.set("server.port", "9090");
-fs.writeFileSync("config.yaml", doc.toString());
+const document = new WasmDocument("# service\nport: 8080\n");
+document.set("port", "9090");
+console.log(document.toString());
 ```
 
----
+## The noyalib-wasm ecosystem
 
-## Why this approach?
+| Component | Purpose |
+| :--- | :--- |
+| `noyalib-wasm` | JavaScript and WebAssembly API |
+| [`noyalib`](https://github.com/sebastienrousseau/noyalib) | Rust parser and lossless CST engine |
+| [`noya-cli`](https://github.com/sebastienrousseau/noya-cli) | Native command-line formatting and validation |
+| npm package | Provenance-attested browser and runtime distribution |
 
-[`js-yaml`](https://github.com/nodeca/js-yaml) is the de-facto
-JS YAML parser, and it's good — but it makes two tradeoffs that
-hurt for editor and tooling workloads:
+## Capabilities at a glance
 
-1. **`js-yaml` discards comments by spec.** It implements the
-   YAML data model, which excludes comments. Round-tripping a
-   document through `parse` → `dump` strips every `#` line.
-   noyalib's `Document` API runs through a lossless CST that
-   reproduces the source byte-for-byte; only the surgically
-   touched span changes on a `set`.
+| Area | Capability | Status |
+| :--- | :--- | :--- |
+| Data model | `parse` and `stringify` | Stable |
+| Indexed access | `getPath` and `merge` | Stable |
+| Validation | JSON-compatible YAML check | Stable |
+| Lossless CST | `WasmDocument` reads and surgical edits | Stable |
+| Targets | bundler, web, nodejs, deno, and no-modules | Supported |
 
-2. **`js-yaml` follows YAML 1.1 by default.** That's the
-   "Norway problem": `country: NO` parses as `country: false`,
-   silently rewriting the country code. noyalib defaults to
-   YAML 1.2 strict semantics; only `true` / `false` are
-   booleans.
+## Ecosystem comparison
 
-### Custom YAML tags
+| Project | YAML 1.2 | Preserves untouched source | Browser-ready |
+| :--- | :---: | :---: | :---: |
+| **noyalib-wasm** | Yes | Yes, through `WasmDocument` | Yes |
+| `js-yaml` | Configurable | No | Yes |
+| Native `noyalib` | Yes | Yes | Requires a Rust host |
 
-`parse(yaml)` surfaces YAML tags as plain JS object keys:
-`!Color '#ff8800'` deserialises into `{ "!Color": "#ff8800" }`.
-This matches the serde-bridge convention every other
-`serde-wasm-bindgen` consumer uses (the `Value::Tagged` variant
-serialises as a single-entry map for cross-format interop).
-Round-tripping via `stringify` does **not** restore the
-YAML-tag prefix — the JS object's tag-as-key shape becomes a
-quoted mapping key in the emitted YAML.
+See [`docs/COMPARISON.md`](docs/COMPARISON.md) for scope and caveats.
 
-For editor / tooling workloads where the YAML-tag wire form
-must survive a parse → emit cycle, use the `WasmDocument`
-class instead. Its `set` / `setValue` are surgical edits
-through the CST, so untouched tag prefixes round-trip
-verbatim:
+## Benchmarks
 
-```js
-const doc = new WasmDocument("color: !Color '#ff8800'\n");
-doc.set("color", "!Color '#00aaff'");           // tag survives
-console.log(doc.toString());                    // "color: !Color '#00aaff'\n"
+The repository measures calls across the real JavaScript-to-WASM boundary and
+tracks release bundle size. Measurements are descriptive, not CI pass/fail
+thresholds.
+
+```bash
+wasm-pack build --release --target nodejs
+node benches/bench.js
 ```
 
-Other differences worth knowing about:
+See [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md) for the recorded method.
 
-- **JSON Schema 2020-12 validation built in.** Same engine as
-  the `noyavalidate` CLI ships.
-- **Pure-Rust, zero `unsafe`.** Every byte of the parser,
-  scanner, formatter, and CST is checked at compile time by the
-  workspace `#![forbid(unsafe_code)]` lint.
-- **~338 KB bundle.** That's roughly the same size as `js-yaml`
-  minified + gzipped, with the lossless-CST surface and YAML
-  1.2 semantics baked in.
+## Features
 
----
+- `parse`, `stringify`, `validateJson`, `getPath`, and `merge` free functions.
+- `WasmDocument` lossless reads, source spans, comments, and surgical edits.
+- JavaScript-native values through `serde-wasm-bindgen`.
+- npm provenance and release supply-chain metadata.
+- Browser, server, edge, and no-module build targets.
 
-## Surface
+## Configuration
 
-All exports are camelCase, matching JS conventions.
+| Command | Target |
+| :--- | :--- |
+| `wasm-pack build --target bundler` | Vite, Webpack, Rollup, and esbuild |
+| `wasm-pack build --target web` | Native browser ES modules |
+| `wasm-pack build --target nodejs` | Node.js CommonJS |
+| `wasm-pack build --target deno` | Deno-native module |
+| `wasm-pack build --target no-modules` | Global browser binding |
 
-### Free functions
-
-| Export | What it does |
-|---|---|
-| `parse(yaml: string): any` | Parse a YAML document into a JS value. Mappings become plain Objects; sequences become Arrays; scalars become numbers / strings / booleans / null. Mirrors `js-yaml`'s `load`. |
-| `stringify(value: any): string` | Serialise a JS value back to YAML. |
-| `validateJson(yaml: string): boolean` | Validate that the document conforms to the YAML 1.2 JSON-compatible schema (only types JSON allows: null / bool / number / string / array / object). Returns `true` / `false`; structural JSON Schema 2020-12 validation is on the `noyavalidate` CLI roadmap. |
-| `getPath(yaml: string, path: string): any` | Indexed read without going through `parse`. Dotted paths (`"server.host"`); returns `null` if missing. |
-| `merge(base: string, override: string): string` | Deep-merge two YAML documents. Delegates to `noyalib::Value::merge`. |
-
-### `WasmDocument` class — lossless CST
-
-Construct with `new WasmDocument(yaml)`. Every method preserves
-comments and formatting around untouched spans byte-faithfully.
-
-| Method | What it does |
-|---|---|
-| `toString(): string` | Re-emit. Byte-identical to the parsed source if no edits were made. |
-| `get(path: string): any` | Parsed value at a dotted path. Returns `null` if missing. |
-| `getSource(path: string): string \| null` | Raw source fragment at a dotted path (no re-quoting / canonicalisation). |
-| `set(path: string, fragment: string): void` | Surgically rewrite a value at a dotted path. The fragment is a YAML-shaped string (`"9090"`, `"[1,2,3]"`, …). |
-| `setValue(path: string, value: any): void` | Same as `set` but accepts a JS value instead of a YAML fragment. |
-| `spanAt(path: string): { start: number, end: number } \| null` | Byte range of the value at a dotted path. |
-| `commentsAt(path: string): { before: string[], inline: string \| null }` | Comments associated with the node at a path. |
-| `replaceSpan(start: number, end: number, replacement: string): void` | Primitive byte replacement. |
-
-Every function is `async` only via `init()` — once the WASM
-blob is loaded, individual calls are synchronous.
-
----
-
-## Bundle size
-
-| Build | Size (raw) | Size (gzip) |
-|---|---|---|
-| Default (`wasm-pack build --release --target bundler`) | ~338 KB | ~140 KB |
-| `--features wasm-opt` (post-build pass) | ~280 KB | ~115 KB |
-
-Tree-shaking-friendly — the `Document` API and the plain
-`parse` / `stringify` API are independent modules; bundlers
-drop whichever your code does not import.
-
-For comparison: `js-yaml` 4.x lands around ~50 KB minified +
-~12 KB gzipped, but does not provide lossless-CST or schema
-validation.
-
----
-
-## Targets
-
-`wasm-pack build` supports every target wasm-bindgen does:
-
-```sh
-wasm-pack build --target bundler    # webpack, rollup, esbuild
-wasm-pack build --target web        # native ES module via <script type="module">
-wasm-pack build --target nodejs     # commonjs Node import
-wasm-pack build --target deno       # Deno-native module
-wasm-pack build --target no-modules # plain global, no module loader
-```
-
-Cloudflare Workers and edge runtimes generally consume the
-`bundler` target via their packaging step.
-
----
-
-## Provenance
-
-Every release on npm carries an
-[npm provenance attestation](https://docs.npmjs.com/generating-provenance-statements)
-linking the published bundle to the GitHub Actions run that
-produced it. Verify via:
-
-```sh
-npm view @sebastienrousseau/noyalib-wasm provenance
-```
-
-GitHub Releases ship the crate archive and a CycloneDX SBOM,
-each with a sigstore bundle and checksums. A standalone signed
-`.wasm` artefact is not attached to releases; the npm package
-(with its provenance attestation, above) is the distribution
-channel for the compiled bundle. Verify a release artefact:
-
-```sh
-cosign verify-blob \
-  --certificate-identity-regexp 'https://github.com/sebastienrousseau/noyalib-wasm/' \
-  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
-  --bundle <artefact>.bundle \
-  <artefact>
-```
-
-Full cookbook: [`pkg/VERIFY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/pkg/VERIFY.md).
-
----
+The release profile leaves `wasm-opt` to the packaging pipeline so one build
+step owns the final artifact transformation.
 
 ## Examples
 
-Browser + Node demos under
-[`crates/noyalib-wasm/examples/`](examples/):
-
-| Path | Target | What it shows |
-|---|---|---|
-| [`node-stringify.js`](examples/node-stringify.js) | Node | `parse` + `stringify` round-trip. |
-| [`cst-edit.js`](examples/cst-edit.js) | Node | Lossless CST edit; comments + whitespace preserved. |
-| [`paths-and-spans.js`](examples/paths-and-spans.js) | Node | `getPath`, `merge`, `getSource`, `spanAt`, `replaceSpan`, `setValue`, `commentsAt`. |
-| [`json-compat.js`](examples/json-compat.js) | Node | `validateJson` — refuse YAML that JSON cannot represent (NaN / Infinity). |
-| [`browser/index.html`](examples/browser/index.html) | Browser | Live in-page YAML editor with a parsed-JSON pane. |
-| [`benches/bench.js`](benches/bench.js) | Node | Throughput measured across the real JS↔wasm boundary. |
-
-> The wasm build ships **no JSON Schema engine**. `validateJson` only
-> checks JSON round-trip safety. For JSON Schema 2020-12 use
-> `noyavalidate --schema`, or the `noyalib` crate's `validate-schema`
-> feature.
-
-```bash
-# Node:
-wasm-pack build --release --target nodejs crates/noyalib-wasm
-node crates/noyalib-wasm/examples/cst-edit.js
-node crates/noyalib-wasm/examples/json-compat.js
-
-# Browser:
-wasm-pack build --release --target web crates/noyalib-wasm
-cd crates/noyalib-wasm/examples/browser
-python3 -m http.server     # or any static-file server
-```
-
----
+- [`node-stringify.js`](examples/node-stringify.js): parse and stringify.
+- [`cst-edit.js`](examples/cst-edit.js): comment-preserving edit.
+- [`paths-and-spans.js`](examples/paths-and-spans.js): indexed access and spans.
+- [`browser/index.html`](examples/browser/index.html): browser editor.
 
 ## When not to use noyalib-wasm
 
-- **You only ever consume YAML in Node and don't care about
-  comment-preserving edits or YAML 1.2 strictness.** `js-yaml`
-  is smaller (~50 KB minified) and the de-facto standard;
-  reach for it first.
-- **You need a streaming parser for multi-GB documents.** The
-  WASM bindings always read the full document into memory.
-  For TB-scale streaming workloads, drive the noyalib library
-  directly from a Rust process and pipe results out.
+- Use a smaller JavaScript-only parser when comments and source-preserving edits
+  do not matter.
+- Use native `noyalib` for streaming or memory-sensitive server workloads.
+- `validateJson` checks JSON round-trip compatibility; it is not a JSON Schema
+  validator. Use `noyavalidate` or the core schema feature for that purpose.
 
----
+The [detailed README reference](docs/README-REFERENCE.md) retains API tables,
+bundle detail, target notes, and provenance commands.
 
-## Compatibility
+## Development
 
-**MSRV: Rust 1.86.0** stable — a deliberate policy choice: one floor across the whole lockstep set,
-with headroom for the dependency tree. No current dependency *requires*
-1.86 — this crate still compiles on 1.85. The whole lockstep set,
-including the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
-the `Per-crate MSRV` workflow job. The bump policy lives in
-[`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#1-msrv-minimum-supported-rust-version).
+```bash
+make
+make test
+make clippy
+make fmt
+wasm-pack test --node
+```
 
-**Tier-1 WASM targets** (CI-verified each PR via
-`wasm-pack test --node`): `wasm32-unknown-unknown` produced
-under every `wasm-pack` mode — `bundler` (Webpack, Rollup,
-esbuild, Vite), `web` (native ES module), `nodejs` (CJS),
-`deno`, `no-modules`. Cloudflare Workers, Deno, and Bun
-consume the `bundler` target.
+CI checks native and WebAssembly builds, Node integration, rustdoc, dependency
+policy, the shared YAML suite, and package provenance. See
+[`DEVELOPMENT.md`](DEVELOPMENT.md).
 
----
+## Security
+
+Report vulnerabilities through [`SECURITY.md`](SECURITY.md). The Rust crate
+forbids `unsafe` code and treats YAML and JavaScript values as untrusted input.
+Published npm artifacts carry provenance linking them to the release workflow.
 
 ## Documentation
 
-The four entry points, identical across every repo in the family:
+- [User Manual](https://sebastienrousseau.github.io/noyalib-wasm/manual/)
+- [Rust API reference](https://docs.rs/noyalib-wasm)
+- [JavaScript API](docs/js-api.md)
+- [Bundling guide](docs/bundling.md)
+- [Developer documentation](DEVELOPMENT.md)
+- [Engineering policies](docs/POLICIES.md)
+- [Compliance grade](docs/COMPLIANCE-GRADE.md)
+- [Detailed README reference](docs/README-REFERENCE.md)
 
-- **[User Manual](https://sebastienrousseau.github.io/noyalib-wasm/manual/)** — this crate's rendered book: its guides, architecture, and release notes; the family manual for the core library is at [https://sebastienrousseau.github.io/noyalib/manual/](https://sebastienrousseau.github.io/noyalib/manual/)
-- **[API reference](https://docs.rs/noyalib-wasm)** — rustdoc on docs.rs
-- **[Developer docs](DEVELOPMENT.md)** — this repo's dev entry point, pointing at the family guide
-- **[Ecosystem map](https://github.com/sebastienrousseau/noyalib/blob/main/docs/ECOSYSTEM.md)** — the six crates, the lockstep model, the scorecard
+## Stability guarantees
 
-- **Engineering policies** (MSRV, SemVer, security, performance, concurrency, platform support, feature flags):
-  [`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md)
-- **Security policy**:
-  [`SECURITY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/SECURITY.md)
-- **JS API reference**:
-  [`docs/js-api.md`](docs/js-api.md)
-- **Bundling (Vite, Webpack, Next.js, Cloudflare Workers, Deno, Bun)**:
-  [`docs/bundling.md`](docs/bundling.md)
-- **npm package**:
-  <https://www.npmjs.com/package/@sebastienrousseau/noyalib-wasm>
-- **API reference (rustdoc)**: <https://docs.rs/noyalib-wasm>
-- **Workspace README**:
-  <https://github.com/sebastienrousseau/noyalib#readme>
-
----
-
-## Conformance
-
-Every push runs the official [yaml-test-suite](https://github.com/yaml/yaml-test-suite)
-through this crate's own JSON model, from the same vendored suite and the same
-core commit as the `noyalib` core: 382 of 382 single-document cases (the 24
-multi-document cases are outside `parse`, which is single-document). The core
-itself passes 406 of 406 with no skip list. A two-document configuration that
-uses most of YAML at once (`tests/fixtures/ultra-complex/`) is also parsed to
-exactly its expected JSON, natively and in Node. Details and the family table:
-[noyalib.com/conformance](https://noyalib.com/conformance/).
+- During `0.0.x`, the patch component is the breaking-change axis.
+- Exported JavaScript names, argument shapes, and return shapes are public API.
+- Untouched bytes remain stable when using the lossless `WasmDocument` surface.
+- The MSRV may rise only on the breaking axis with a changelog explanation.
 
 ## License
 
-Dual-licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-or [MIT](https://opensource.org/licenses/MIT), at your option.
+Licensed under either [Apache License 2.0](LICENSE-APACHE) or
+[MIT](LICENSE-MIT), at your option.
