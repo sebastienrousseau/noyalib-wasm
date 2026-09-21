@@ -274,7 +274,7 @@ Full cookbook: [`pkg/VERIFY.md`](https://github.com/sebastienrousseau/noyalib/bl
 ## Examples
 
 Browser + Node demos under
-[`crates/noyalib-wasm/examples/`](examples/):
+[`examples/`](../examples/):
 
 | Path | Target | What it shows |
 |---|---|---|
