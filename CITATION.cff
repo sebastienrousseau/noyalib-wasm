@@ -11,8 +11,8 @@ authors:
 repository-code: "https://github.com/sebastienrousseau/noyalib-wasm"
 url: "https://github.com/sebastienrousseau/noyalib-wasm"
 license: "Apache-2.0 OR MIT"
-version: 0.0.46
-date-released: "2026-09-20"
+version: 0.0.47
+date-released: "2026-09-21"
 abstract: >-
   WebAssembly (wasm-bindgen) bindings for the noyalib YAML library. Part of the noyalib YAML 1.2 family for Rust, released in
   lockstep with the core library.
