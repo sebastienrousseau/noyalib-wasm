@@ -152,7 +152,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib"
-version = "0.0.46"
+version = "0.0.47"
 dependencies = [
  "hashbrown",
  "indexmap",
@@ -168,7 +168,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.46"
+version = "0.0.47"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",
