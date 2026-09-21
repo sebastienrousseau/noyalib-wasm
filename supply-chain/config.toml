@@ -28,9 +28,17 @@ url = "https://raw.githubusercontent.com/zcash/rust-ecosystem/main/supply-chain/
 [policy.noyalib-wasm]
 audit-as-crates-io = false
 
+[[exemptions.cc]]
+version = "1.2.61"
+criteria = "safe-to-run"
+
 [[exemptions.find-msvc-tools]]
 version = "0.1.9"
 criteria = "safe-to-run"
+
+[[exemptions.futures-core]]
+version = "0.3.34"
+criteria = "safe-to-deploy"
 
 [[exemptions.futures-task]]
 version = "0.3.33"
@@ -38,6 +46,10 @@ criteria = "safe-to-deploy"
 
 [[exemptions.futures-util]]
 version = "0.3.33"
+criteria = "safe-to-deploy"
+
+[[exemptions.indexmap]]
+version = "2.14.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.js-sys]]
@@ -49,7 +61,11 @@ version = "0.3.8"
 criteria = "safe-to-run"
 
 [[exemptions.noyalib]]
-version = "0.0.45"
+version = "0.0.46"
+criteria = "safe-to-deploy"
+
+[[exemptions.smallvec]]
+version = "1.16.1"
 criteria = "safe-to-deploy"
 
 [[exemptions.wasm-bindgen]]
