@@ -61,7 +61,7 @@ version = "0.3.8"
 criteria = "safe-to-run"
 
 [[exemptions.noyalib]]
-version = "0.0.47"
+version = "0.0.51"
 criteria = "safe-to-deploy"
 
 [[exemptions.smallvec]]
