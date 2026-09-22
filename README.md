@@ -58,7 +58,7 @@
 ### As a JavaScript library
 
 ```bash
-npm install @sebastienrousseau/noyalib-wasm@0.0.47
+npm install @sebastienrousseau/noyalib-wasm@0.0.48
 ```
 
 `pnpm add` and `yarn add` work with the same package. To build from source:
@@ -71,7 +71,7 @@ wasm-pack build --release --target bundler
 
 - Rust **1.86.0 or newer** and `wasm-pack` when building from source.
 - A WebAssembly-capable browser, Node.js, Deno, Bun, or edge runtime.
-- The crate pins `noyalib` at exactly `=0.0.47` under the lockstep contract.
+- The crate pins `noyalib` at exactly `=0.0.48` under the lockstep contract.
 
 | Surface | Minimum | Enforcement |
 | :--- | :---: | :--- |
