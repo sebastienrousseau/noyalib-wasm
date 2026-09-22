@@ -24,10 +24,6 @@ test = false
 doc = false
 bench = false
 
-# Pre-release resolution for the parent manifest's exact core pin.
-[patch.crates-io]
-noyalib = { git = "https://github.com/sebastienrousseau/noyalib", branch = "feat/v0.0.51" }
-
 [[bin]]
 name = "fuzz_document_path"
 path = "fuzz_targets/fuzz_document_path.rs"
