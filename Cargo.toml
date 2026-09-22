@@ -44,8 +44,3 @@ wasm-opt = false
 # the dep — disabling it would lose the readable JS-side
 # stack-trace integration.
 ignored = ["console_error_panic_hook"]
-
-# Pre-release resolution for the exact lockstep core pin. Remove this
-# section after noyalib 0.0.50 is published and before tagging this crate.
-[patch.crates-io]
-noyalib = { git = "https://github.com/sebastienrousseau/noyalib", branch = "feat/v0.0.50" }
