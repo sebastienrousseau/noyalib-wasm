@@ -11,6 +11,13 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.53] - 2026-10-06
+
+### Changed
+
+- Lockstep release with noyalib core 0.0.53: the exact core pin moves to
+  `=0.0.53`. No functional change in this crate beyond the version.
+
 ## [v0.0.52] - 2026-09-22
 
 ### Changed
