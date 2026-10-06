@@ -53,7 +53,7 @@ version = "2.14.2"
 criteria = "safe-to-deploy"
 
 [[exemptions.js-sys]]
-version = "0.3.105"
+version = "0.3.106"
 criteria = "safe-to-deploy"
 
 [[exemptions.minicov]]
@@ -64,36 +64,40 @@ criteria = "safe-to-run"
 version = "1.16.1"
 criteria = "safe-to-deploy"
 
+[[exemptions.tokio]]
+version = "1.53.2"
+criteria = "safe-to-run"
+
 [[exemptions.wasm-bindgen]]
-version = "0.2.128"
+version = "0.2.129"
 criteria = "safe-to-deploy"
 
 [[exemptions.wasm-bindgen-futures]]
-version = "0.4.78"
+version = "0.4.79"
 criteria = "safe-to-run"
 
 [[exemptions.wasm-bindgen-macro]]
-version = "0.2.128"
+version = "0.2.129"
 criteria = "safe-to-deploy"
 
 [[exemptions.wasm-bindgen-macro-support]]
-version = "0.2.128"
+version = "0.2.129"
 criteria = "safe-to-deploy"
 
 [[exemptions.wasm-bindgen-shared]]
-version = "0.2.128"
+version = "0.2.129"
 criteria = "safe-to-deploy"
 
 [[exemptions.wasm-bindgen-test]]
-version = "0.3.78"
+version = "0.3.79"
 criteria = "safe-to-run"
 
 [[exemptions.wasm-bindgen-test-macro]]
-version = "0.3.78"
+version = "0.3.79"
 criteria = "safe-to-run"
 
 [[exemptions.wasm-bindgen-test-shared]]
-version = "0.2.128"
+version = "0.2.129"
 criteria = "safe-to-run"
 
 [[exemptions.windows-sys]]
