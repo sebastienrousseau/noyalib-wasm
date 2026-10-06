@@ -44,6 +44,3 @@ wasm-opt = false
 # the dep — disabling it would lose the readable JS-side
 # stack-trace integration.
 ignored = ["console_error_panic_hook"]
-
-[patch.crates-io]
-noyalib = { git = "https://github.com/sebastienrousseau/noyalib", branch = "feat/v0.0.52" }
