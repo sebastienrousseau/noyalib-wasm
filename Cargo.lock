@@ -152,8 +152,8 @@ dependencies = [
 
 [[package]]
 name = "noyalib"
-version = "0.0.52"
-source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.52#431901f3f5b8f6f3fc7b41c062502b116f0ebabd"
+version = "0.0.53"
+source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.53#621413b016786583dbaf530b7d9b2652b2d8dca9"
 dependencies = [
  "hashbrown",
  "indexmap",
@@ -169,7 +169,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.52"
+version = "0.0.53"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",
