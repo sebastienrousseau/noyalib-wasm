@@ -23,7 +23,6 @@ path = "fuzz_targets/fuzz_core.rs"
 test = false
 doc = false
 bench = false
-
 [[bin]]
 name = "fuzz_document_path"
 path = "fuzz_targets/fuzz_document_path.rs"
