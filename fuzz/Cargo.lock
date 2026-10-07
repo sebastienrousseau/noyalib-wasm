@@ -155,7 +155,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 [[package]]
 name = "noyalib"
 version = "0.0.55"
-source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.55#b15b02c12334649976dfba07ca3b924659814fea"
+source = "git+https://github.com/sebastienrousseau/noyalib?branch=feat%2Fv0.0.55#591857a4464dc67ac96720d422d1eb845212f4e0"
 dependencies = [
  "hashbrown",
  "indexmap",
@@ -173,6 +173,7 @@ dependencies = [
 name = "noyalib-wasm"
 version = "0.0.55"
 dependencies = [
+ "js-sys",
  "noyalib",
  "serde",
  "serde-wasm-bindgen",
