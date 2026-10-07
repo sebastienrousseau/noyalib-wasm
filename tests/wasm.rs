@@ -181,3 +181,106 @@ fn parse_json_projects_the_ultra_complex_fixture() {
     let got: serde_json::Value = serde_json::from_str(&String::from(text)).unwrap();
     assert_eq!(got, expected[1]);
 }
+
+// ── Deep and cyclic input must fail cleanly, not trap the instance ──────
+
+fn deep_object(levels: usize) -> JsValue {
+    let mut v = JsValue::from(1);
+    for _ in 0..levels {
+        let o = js_sys::Object::new();
+        js_sys::Reflect::set(&o, &JsValue::from_str("k"), &v).unwrap();
+        v = o.into();
+    }
+    v
+}
+
+fn deep_array(levels: usize) -> JsValue {
+    let mut v = JsValue::from(1);
+    for _ in 0..levels {
+        v = js_sys::Array::of1(&v).into();
+    }
+    v
+}
+
+fn cyclic_object() -> JsValue {
+    let o = js_sys::Object::new();
+    js_sys::Reflect::set(&o, &JsValue::from_str("self"), &o).unwrap();
+    o.into()
+}
+
+fn instance_still_works() {
+    assert!(parse("z: 2").is_ok(), "the instance trapped");
+}
+
+#[wasm_bindgen_test]
+fn stringify_accepts_nesting_up_to_the_limit() {
+    assert!(stringify(deep_object(128)).is_ok());
+    assert!(stringify(deep_array(128)).is_ok());
+}
+
+#[wasm_bindgen_test]
+fn stringify_refuses_deep_values() {
+    assert!(stringify(deep_object(129)).is_err());
+    assert!(stringify(deep_object(20_000)).is_err());
+    assert!(stringify(deep_array(20_000)).is_err());
+    instance_still_works();
+}
+
+#[wasm_bindgen_test]
+fn stringify_refuses_a_cyclic_value() {
+    assert!(stringify(cyclic_object()).is_err());
+    instance_still_works();
+}
+
+#[wasm_bindgen_test]
+fn stringify_refuses_a_deep_map() {
+    let mut v = JsValue::from(1);
+    for _ in 0..20_000 {
+        let m = js_sys::Map::new();
+        m.set(&JsValue::from_str("k"), &v);
+        v = m.into();
+    }
+    assert!(stringify(v).is_err());
+    instance_still_works();
+}
+
+#[wasm_bindgen_test]
+fn set_value_refuses_deep_and_cyclic_values() {
+    let mut doc = WasmDocument::new("a: 1\n").unwrap();
+    assert!(doc.set_value("a", deep_object(20_000)).is_err());
+    assert!(doc.set_value("a", cyclic_object()).is_err());
+    assert_eq!(doc.to_string(), "a: 1\n");
+    instance_still_works();
+}
+
+fn flow(n: usize) -> String {
+    format!("{}{}", "[".repeat(n), "]".repeat(n))
+}
+
+#[wasm_bindgen_test]
+fn set_refuses_a_deeply_nested_fragment() {
+    let mut doc = WasmDocument::new("a: 1\n").unwrap();
+    assert!(doc.set("a", &flow(100_000)).is_err());
+    assert_eq!(doc.to_string(), "a: 1\n");
+    assert!(doc.set("a", &flow(3)).is_ok());
+    instance_still_works();
+}
+
+#[wasm_bindgen_test]
+fn replace_span_refuses_a_deeply_nested_replacement() {
+    let mut doc = WasmDocument::new("a: 1\n").unwrap();
+    assert!(doc.replace_span(3, 4, &flow(100_000)).is_err());
+    assert_eq!(doc.to_string(), "a: 1\n");
+    instance_still_works();
+}
+
+#[wasm_bindgen_test]
+fn replace_span_checks_the_whole_edited_source() {
+    // Brackets that were a comment become structure once the `#` is
+    // replaced: a one-byte replacement, a 100,000-deep document.
+    let source = format!("a: #{}\n", flow(100_000));
+    let mut doc = WasmDocument::new(&source).unwrap();
+    assert!(doc.replace_span(3, 4, " ").is_err());
+    assert_eq!(doc.to_string(), source);
+    instance_still_works();
+}
