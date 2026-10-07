@@ -36,10 +36,6 @@ criteria = "safe-to-run"
 version = "0.1.9"
 criteria = "safe-to-run"
 
-[[exemptions.futures-core]]
-version = "0.3.34"
-criteria = "safe-to-deploy"
-
 [[exemptions.futures-task]]
 version = "0.3.33"
 criteria = "safe-to-deploy"
@@ -61,7 +57,7 @@ version = "0.3.8"
 criteria = "safe-to-run"
 
 [[exemptions.noyalib]]
-version = "0.0.53"
+version = "0.0.54"
 criteria = "safe-to-deploy"
 
 [[exemptions.smallvec]]
