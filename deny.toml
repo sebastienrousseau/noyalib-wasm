@@ -66,4 +66,8 @@ highlight = "all"
 unknown-registry = "deny"
 unknown-git = "deny"
 allow-registry = ["https://github.com/rust-lang/crates.io-index"]
-allow-git = []
+# Pre-release only: the [patch.crates-io] on Cargo.toml resolves the core
+# from its feat/vX.Y.Z branch until it publishes. The release gate
+# (scripts/verify-release-versions.sh) refuses a tag while this lists
+# anything, so it is emptied at the cut with the patch.
+allow-git = ["https://github.com/sebastienrousseau/noyalib"]
