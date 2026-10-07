@@ -11,6 +11,12 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.55] - Unreleased
+
+### Changed
+
+- Tracks `noyalib` 0.0.55 under the exact lockstep pin.
+
 ## [v0.0.54] - 2026-10-07
 
 ### Changed
