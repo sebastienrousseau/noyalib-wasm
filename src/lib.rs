@@ -47,10 +47,13 @@
 //!   a 4 GiB cap on `wasm32-unknown-unknown`. Bound `noyalib` resource use
 //!   ahead of time via `ParserConfig::strict()` or explicit `max_*` budgets to
 //!   fail with a structured `Error::Budget` instead of an OOM abort.
-//! - **Stack overflow.** Pathologically deep YAML (>4096 nested nodes by
-//!   default) is rejected with `Error::RecursionLimitExceeded` long before the
-//!   WASM stack overflows; deliberately misconfigured `max_depth` may overflow
-//!   the host stack.
+//! - **Stack overflow.** YAML nested deeper than the parser's default
+//!   `max_depth` (128) is rejected with `Error::RecursionLimitExceeded` long
+//!   before the WASM stack overflows. JavaScript values given to `stringify`
+//!   and `setValue` are walked first and refused when cyclic or nested deeper
+//!   than 128 levels, and the YAML text given to `set` and `replaceSpan` is
+//!   depth-checked before the CST edit path re-parses it, since both
+//!   converters recurse without a limit of their own.
 //! - **Host abort on `panic = abort`.** Every release build uses `panic =
 //!   abort` (per `Cargo.toml`), so any logic-level panic terminates the
 //!   WebAssembly instance with no chance of `catch_unwind`.
@@ -129,6 +132,7 @@
 #![forbid(unsafe_code)]
 
 pub mod core;
+mod guard;
 
 use noyalib::cst::{Document, parse_document};
 use serde::Serialize;
@@ -151,6 +155,52 @@ fn to_js<T: Serialize + ?Sized>(value: &T) -> Result<JsValue, serde_wasm_bindgen
         .serialize_maps_as_objects(true)
         .serialize_missing_as_null(true);
     value.serialize(&serializer)
+}
+
+/// Convert a JavaScript value into a [`noyalib::Value`], refusing one that
+/// is cyclic or nested deeper than the parser's depth limit before the
+/// unbounded converter sees it.
+fn from_js(value: JsValue) -> Result<noyalib::Value, JsError> {
+    guard::check_shape(&value).map_err(|e| JsError::new(&e.to_string()))?;
+    serde_wasm_bindgen::from_value(value).map_err(|e| JsError::new(&e.to_string()))
+}
+
+mod js_shape {
+    use crate::guard::Node;
+    use js_sys::{Array, Map, Object, Symbol, Uint8Array};
+    use wasm_bindgen::{JsCast, JsValue};
+
+    /// Mirrors what `serde_wasm_bindgen` deserializes as a sequence or a
+    /// map (`deserialize_any`): arrays, `Map`s, and plain objects that
+    /// are not iterable. Byte buffers, sets and other iterables are
+    /// leaves (the converter refuses or copies them without recursing).
+    impl Node for JsValue {
+        fn children(&self) -> Option<Vec<Self>> {
+            if Array::is_array(self) {
+                return Some(Array::from(self).iter().collect());
+            }
+            if !self.is_object() || self.is_instance_of::<Uint8Array>() {
+                return None;
+            }
+            if let Some(map) = self.dyn_ref::<Map>() {
+                let mut out = Vec::new();
+                map.for_each(&mut |v, k| {
+                    out.push(k);
+                    out.push(v);
+                });
+                return Some(out);
+            }
+            if Symbol::iterator().js_in(self) {
+                return None;
+            }
+            let entries = Object::entries(self.unchecked_ref());
+            Some(entries.iter().map(|e| Array::from(&e).get(1)).collect())
+        }
+
+        fn same(&self, other: &Self) -> bool {
+            Object::is(self, other)
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -198,6 +248,7 @@ impl WasmDocument {
         end: usize,
         replacement: &str,
     ) -> Result<(), JsError> {
+        self.check_splice(start, end, replacement)?;
         self.inner
             .replace_span(start, end, replacement)
             .map_err(|e| JsError::new(&e.to_string()))
@@ -243,8 +294,7 @@ impl WasmDocument {
     /// conventions.
     #[wasm_bindgen(js_name = setValue)]
     pub fn set_value(&mut self, path: &str, value: JsValue) -> Result<(), JsError> {
-        let v: noyalib::Value =
-            serde_wasm_bindgen::from_value(value).map_err(|e| JsError::new(&e.to_string()))?;
+        let v = from_js(value)?;
         self.inner
             .set_value(path, &v)
             .map_err(|e| JsError::new(&e.to_string()))
@@ -252,6 +302,7 @@ impl WasmDocument {
 
     /// Set a value at a dotted path using a YAML fragment string.
     pub fn set(&mut self, path: &str, fragment: &str) -> Result<(), JsError> {
+        guard::check_text(fragment).map_err(|e| JsError::new(&e))?;
         self.inner
             .set(path, fragment)
             .map_err(|e| JsError::new(&e.to_string()))
@@ -277,6 +328,23 @@ impl WasmDocument {
 }
 
 impl WasmDocument {
+    /// Refuse a `replaceSpan` whose result would nest deeper than the
+    /// parser allows. The whole edited source is checked, since removing
+    /// a quote can turn brackets that were text into structure. An
+    /// out-of-range or mid-character span is left to the core, which
+    /// reports it.
+    fn check_splice(&self, start: usize, end: usize, replacement: &str) -> Result<(), JsError> {
+        let source = self.inner.to_string();
+        let (Some(head), Some(tail)) = (source.get(..start), source.get(end..)) else {
+            return Ok(());
+        };
+        if start > end {
+            return Ok(());
+        }
+        let edited = [head, replacement, tail].concat();
+        guard::check_text(&edited).map_err(|e| JsError::new(&e))
+    }
+
     /// Native (rlib) accessor for the inner [`Document`]. Lets
     /// `cargo test` exercise the underlying state transitions
     /// without going through a JS shell.
@@ -307,8 +375,7 @@ pub fn parse_json(yaml: &str) -> Result<JsValue, JsError> {
 /// Serialize a JS object to a YAML string.
 #[wasm_bindgen]
 pub fn stringify(value: JsValue) -> Result<String, JsError> {
-    let v: noyalib::Value =
-        serde_wasm_bindgen::from_value(value).map_err(|e| JsError::new(&e.to_string()))?;
+    let v = from_js(value)?;
     core::value_to_yaml(&v).map_err(|e| JsError::new(&e.to_string()))
 }
 

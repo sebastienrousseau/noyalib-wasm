@@ -44,7 +44,10 @@ Serialise a JS value back to a YAML string. The output is
 canonical noyalib YAML — block style for non-leaf collections,
 auto-quoted scalars where ambiguity would otherwise surface.
 Throws if the value contains JS-specific shapes the YAML data
-model doesn't support (functions, symbols).
+model doesn't support (functions, symbols), if it contains itself
+(a cycle), if it nests arrays, objects or `Map`s deeper than 128
+levels (the parser's default depth limit), or if it has more than
+1,000,000 elements counting shared references once per use.
 
 ```ts
 import { stringify } from "noyalib-wasm";
@@ -164,7 +167,9 @@ const span = doc.spanAt("server.host");
 
 Set the value at a dotted path using a **YAML fragment string**.
 The fragment must parse as valid YAML in the target position;
-the document is left unchanged on parse error.
+the document is left unchanged on parse error. A fragment nested
+deeper than 128 levels is refused before it is parsed into the
+document.
 
 ```ts
 doc.set("server.port", "9090");
@@ -181,7 +186,7 @@ entries are byte-identical.
 Set the value at a dotted path using a **JS object**. Internally
 serialises the JS value through `noyalib::Value` and applies the
 result. Equivalent to `doc.set(path, stringify(value))` but
-slightly more direct.
+slightly more direct, with the same limits as `stringify`.
 
 ```ts
 doc.setValue("server", {
@@ -196,8 +201,10 @@ doc.setValue("server", {
 Replace the bytes in `[start, end)` with `replacement`. The
 lower-level escape hatch — used when you have a span from
 `spanAt` and want to do something the structured API doesn't
-cover. The replacement is not validated for parseability; you
-get what you write.
+cover. The edited document must still parse: an edit that leaves
+invalid YAML, or YAML nested deeper than 128 levels (for example a
+`#` replaced so a commented-out run of brackets becomes structure),
+throws and leaves the document unchanged.
 
 #### `doc.commentsAt(path: string): { before: string[]; inline: string | null }`
 

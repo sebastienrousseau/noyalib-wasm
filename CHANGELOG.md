@@ -17,6 +17,18 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 - Tracks `noyalib` 0.0.55 under the exact lockstep pin.
 
+### Fixed
+
+- `stringify` and `WasmDocument.setValue` refuse a JavaScript value that
+  contains itself or nests arrays, objects or `Map`s deeper than 128
+  levels with a JavaScript `Error`. Such a value used to trap the
+  WebAssembly instance (`memory access out of bounds`), and every later
+  call into it trapped too.
+- `WasmDocument.set` and `replaceSpan` check the depth of the edited YAML
+  before the CST edit path re-parses it, so a 100,000-deep fragment, or a
+  one-byte edit that turns a commented-out run of brackets into
+  structure, throws instead of overflowing the stack.
+
 ## [v0.0.54] - 2026-10-07
 
 ### Changed
