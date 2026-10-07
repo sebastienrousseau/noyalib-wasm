@@ -54,7 +54,8 @@ impl fmt::Display for ShapeError {
 
 /// A value the converter descends into: arrays, objects and maps have
 /// children, everything else is a leaf. Implemented for handle types, so
-/// `Clone` is a reference copy.
+/// `Clone` is a reference copy. The `JsValue` implementation lives with
+/// the bindings in `lib.rs`.
 pub(crate) trait Node: Sized + Clone {
     /// `Some(children)` for a container, `None` for a leaf.
     fn children(&self) -> Option<Vec<Self>>;
@@ -90,44 +91,6 @@ fn visit<N: Node>(node: &N, ancestors: &mut Vec<N>, budget: &mut usize) -> Resul
         .try_for_each(|c| visit(c, ancestors, budget));
     let _ = ancestors.pop();
     result
-}
-
-mod js {
-    use super::Node;
-    use js_sys::{Array, Map, Object, Symbol, Uint8Array};
-    use wasm_bindgen::{JsCast, JsValue};
-
-    /// Mirrors what `serde_wasm_bindgen` deserializes as a sequence or a
-    /// map (`deserialize_any`): arrays, `Map`s, and plain objects that
-    /// are not iterable. Byte buffers, sets and other iterables are
-    /// leaves (the converter refuses or copies them without recursing).
-    impl Node for JsValue {
-        fn children(&self) -> Option<Vec<Self>> {
-            if Array::is_array(self) {
-                return Some(Array::from(self).iter().collect());
-            }
-            if !self.is_object() || self.is_instance_of::<Uint8Array>() {
-                return None;
-            }
-            if let Some(map) = self.dyn_ref::<Map>() {
-                let mut out = Vec::new();
-                map.for_each(&mut |v, k| {
-                    out.push(k);
-                    out.push(v);
-                });
-                return Some(out);
-            }
-            if Symbol::iterator().js_in(self) {
-                return None;
-            }
-            let entries = Object::entries(self.unchecked_ref());
-            Some(entries.iter().map(|e| Array::from(&e).get(1)).collect())
-        }
-
-        fn same(&self, other: &Self) -> bool {
-            Object::is(self, other)
-        }
-    }
 }
 
 /// Refuse YAML `text` that is nested deeper than the parser's default
@@ -233,6 +196,13 @@ mod tests {
 
     fn nested(levels: usize) -> T {
         (0..levels).fold(T::Leaf, |inner, _| T::list(vec![inner]))
+    }
+
+    #[test]
+    fn refusals_explain_themselves() {
+        assert!(ShapeError::Cyclic.to_string().contains("cyclic"));
+        assert!(ShapeError::TooDeep.to_string().contains("128"));
+        assert!(ShapeError::TooLarge.to_string().contains("1000000"));
     }
 
     #[test]

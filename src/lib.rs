@@ -165,6 +165,44 @@ fn from_js(value: JsValue) -> Result<noyalib::Value, JsError> {
     serde_wasm_bindgen::from_value(value).map_err(|e| JsError::new(&e.to_string()))
 }
 
+mod js_shape {
+    use crate::guard::Node;
+    use js_sys::{Array, Map, Object, Symbol, Uint8Array};
+    use wasm_bindgen::{JsCast, JsValue};
+
+    /// Mirrors what `serde_wasm_bindgen` deserializes as a sequence or a
+    /// map (`deserialize_any`): arrays, `Map`s, and plain objects that
+    /// are not iterable. Byte buffers, sets and other iterables are
+    /// leaves (the converter refuses or copies them without recursing).
+    impl Node for JsValue {
+        fn children(&self) -> Option<Vec<Self>> {
+            if Array::is_array(self) {
+                return Some(Array::from(self).iter().collect());
+            }
+            if !self.is_object() || self.is_instance_of::<Uint8Array>() {
+                return None;
+            }
+            if let Some(map) = self.dyn_ref::<Map>() {
+                let mut out = Vec::new();
+                map.for_each(&mut |v, k| {
+                    out.push(k);
+                    out.push(v);
+                });
+                return Some(out);
+            }
+            if Symbol::iterator().js_in(self) {
+                return None;
+            }
+            let entries = Object::entries(self.unchecked_ref());
+            Some(entries.iter().map(|e| Array::from(&e).get(1)).collect())
+        }
+
+        fn same(&self, other: &Self) -> bool {
+            Object::is(self, other)
+        }
+    }
+}
+
 #[derive(Serialize)]
 struct WasmSpan {
     start: usize,
