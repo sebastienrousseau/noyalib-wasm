@@ -11,7 +11,7 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
-## [v0.0.56] - Unreleased
+## [v0.0.56] - 2026-10-08
 
 ### Changed
 
