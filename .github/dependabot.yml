@@ -25,6 +25,8 @@ updates:
       # release tag, not Dependabot. See ADR-0005 (in
       # sebastienrousseau/noyalib) for the lockstep contract.
       - dependency-name: "noyalib"
+    cooldown:
+      default-days: 7
 
   # GitHub Actions — includes SHA bumps of the shared reusable
   # workflows consumed from sebastienrousseau/noyalib. A hardening
@@ -46,3 +48,5 @@ updates:
       github-actions:
         patterns:
           - "*"
+    cooldown:
+      default-days: 7

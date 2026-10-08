@@ -261,7 +261,7 @@ channel for the compiled bundle. Verify a release artefact:
 
 ```sh
 cosign verify-blob \
-  --certificate-identity-regexp 'https://github.com/sebastienrousseau/noyalib-wasm/' \
+  --certificate-identity-regexp '^https://github\.com/sebastienrousseau/noyalib-wasm/\.github/workflows/release\.yml@refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com' \
   --bundle <artefact>.bundle \
   <artefact>

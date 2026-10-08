@@ -70,9 +70,30 @@ parent `noyalib` releases:
 1. SLSA Level 3 build provenance via
    `actions/attest-build-provenance`.
 2. Keyless sigstore signing (Fulcio + Rekor) on every published
-   crate / npm bundle.
+   `.crate` and SBOM; the npm package carries npm provenance
+   (Trusted Publishing) instead.
 3. Software bill of materials (SBOM) attached to each GitHub
    Release.
+
+### Verifying a release
+
+Pin the workflow and the tag, not just the repository: an attestation
+or signature from any other workflow, or from a branch, must not pass.
+
+```sh
+# SLSA provenance (any release asset)
+gh attestation verify <artefact> \
+  --repo sebastienrousseau/noyalib-wasm \
+  --signer-workflow sebastienrousseau/noyalib-wasm/.github/workflows/release.yml \
+  --source-ref refs/tags/vX.Y.Z \
+  --deny-self-hosted-runners
+
+# Keyless sigstore signature (.crate and SBOM, with its .bundle)
+cosign verify-blob \
+  --certificate-identity-regexp '^https://github\.com/sebastienrousseau/noyalib-wasm/\.github/workflows/release\.yml@refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --bundle <artefact>.bundle <artefact>
+```
 
 ### Detached GPG signatures
 
