@@ -5,8 +5,9 @@ name: Release
 
 # Satellite release workflow — patterns match the parent
 # `sebastienrousseau/noyalib`'s `release.yml`:
-#   validate → artifacts (SLSA L3 + sigstore + SBOM) → cross-verify
-#   → github-release → crates-io → npm-publish
+#   tag-signature → validate → artifacts (.crate + SBOM)
+#   → { sign (SLSA L3 + sigstore + GPG), reproducible, cross-verify }
+#   → github-release → crates-io, npm-build → npm-publish
 #
 # Consumed on `v*.*.*` tag pushes and via manual dispatch (with
 # dry-run gate). Strict-lockstep versioning (ADR-0005) requires
@@ -33,15 +34,25 @@ env:
   CARGO_INCREMENTAL: '0'
 
 jobs:
+  # ── Release tag: annotated, signed, by the release key ─────────────
+  # Shared with every crate in the family (shared-tag-signature.yml):
+  # the tag must be annotated, verified by GitHub, made by the release
+  # identity on the commit being built, and signed by a pinned key.
+  # Passes without checking on a workflow_dispatch dry run.
+  tag-signature:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-tag-signature.yml@139a826ba273b8f9feffff54795711f4df321928
+
   # ── Quality gate ────────────────────────────────────────────────────
   validate:
     name: Validate
+    needs: tag-signature
     runs-on: ubuntu-latest
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
@@ -52,8 +63,8 @@ jobs:
       # CACHE-POISONING GUARD: release-time gate uses an isolated
       # CARGO_TARGET_DIR so stale artefacts from a PR build can't
       # mask a release regression.
-      - uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
-        with:
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with: # zizmor: ignore[cache-poisoning] test-only job: nothing it builds ships, and the key is written only by tag runs of this workflow
           workspaces: ". -> target-release-validate"
           key: release-validate
 
@@ -84,28 +95,26 @@ jobs:
           fi
           echo "Version verified: tag=$TAG_VERSION, crate=$CARGO_VERSION, noyalib dep pin=$NOYALIB_PIN"
 
-  # ── Build checksums, SBOM, SLSA L3 provenance, sigstore signatures ──
+  # ── Build .crate, checksums and SBOM (the `sign` job signs them) ────
   artifacts:
     name: Build artifacts
     needs: validate
     runs-on: ubuntu-latest
-    # `id-token: write` — Fulcio keyless signing exchanges the
-    #   OIDC token for an ephemeral cert that signs each .crate.
-    # `attestations: write` — SLSA L3 build-provenance uploaded
-    #   into the workflow's attestation store.
-    # `contents: read` — checkout / source access only.
     permissions:
       contents: read
-      id-token: write
-      attestations: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
         with:
           toolchain: stable
 
-      - uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
+      # No build cache here: this job produces what ships. A restored
+      # ~/.cargo/registry/src or target/ is not re-verified against
+      # Cargo.lock, so a poisoned cache entry would flow into the
+      # release (zizmor cache-poisoning). Release builds start clean.
 
       # Everything else that carries the version. Added after v0.0.28,
       # where noyalib-mcp's registry manifests were missed and the
@@ -127,7 +136,7 @@ jobs:
           # ingest — `cargo tree > txt` is not an SBOM format.
           # Mirrors the core repo's release pipeline; `--all-features`
           # records the superset dependency graph.
-          cargo install --locked cargo-cyclonedx
+          cargo install --locked cargo-cyclonedx --version 0.5.9
           cargo cyclonedx --format json --all-features --describe crate --spec-version 1.5
           mv ./*.cdx.json SBOM.cdx.json
           python3 -c "import json; d=json.load(open('SBOM.cdx.json')); print('CycloneDX', d['specVersion'], '-', d['metadata']['component']['name'], d['metadata']['component']['version'], '-', len(d.get('components', [])), 'components')"
@@ -142,7 +151,50 @@ jobs:
             sha256sum "$f" >> SHA256SUMS.txt
             sha512sum "$f" >> SHA512SUMS.txt
           done
-          ls *.crate > CRATE_FILES.txt
+          ls ./*.crate > CRATE_FILES.txt
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-artifacts
+          path: |
+            target/package/*.crate
+            target/package/SHA256SUMS.txt
+            target/package/SHA512SUMS.txt
+            SBOM.txt
+            SBOM.cdx.json
+          retention-days: 5
+
+  # ── Sign release artefacts (isolated from the build) ───────────────
+  # Attestation, keyless signing and the detached GPG signatures run in
+  # their own job, which downloads the finished artefacts and executes
+  # nothing from the source tree or its dependency graph. Until v0.0.55
+  # they ran in `artifacts`, after `cargo package` and `cargo install`
+  # had executed every build script in the graph; a build script can
+  # append to $GITHUB_ENV and read later steps' environment, including
+  # GPG_PRIVATE_KEY and the OIDC signing identity.
+  #
+  # GPG_PRIVATE_KEY and GPG_PASSPHRASE belong to the `release-signing`
+  # environment, which only `v*` tags may deploy to. Tag runs only: a
+  # workflow_dispatch dry run builds and verifies but signs nothing.
+  sign:
+    name: Sign release artefacts
+    needs: artifacts
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    environment: release-signing
+    permissions:
+      contents: read
+      # `id-token: write`: Fulcio keyless signing and the SLSA
+      #   provenance attestation exchange the job's OIDC token.
+      # `attestations: write`: provenance lands in the attestation store.
+      id-token: write
+      attestations: write
+    steps:
+      - name: Download the unsigned release artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-artifacts
 
       # ── SLSA L3 build provenance ───────────────────────────────────
       # Records the exact source commit, builder identity, and
@@ -187,11 +239,13 @@ jobs:
       # which is what package maintainers and air-gapped consumers ask
       # for.
       #
-      # Deliberately a STEP in this job rather than a separate job. The
-      # `.asc` files are produced before the same `upload-artifact` that
-      # carries the crate and the bundles, so they cannot lose a race
-      # with the release job. static-site-generator learned this the
-      # hard way: its signing job ran concurrently with publishing, so
+      # A step in the separate `sign` job since v0.0.55 (it used to be a
+      # step in `artifacts`, next to the build). It still cannot lose a
+      # race with the release: `github-release` needs this job and
+      # attaches only what it uploads as `release-signed`, so the `.asc`
+      # files exist before the artifact the release reads.
+      # static-site-generator learned the hard way what happens
+      # otherwise: its signing job ran concurrently with publishing, so
       # the signatures were generated, stored, and dropped before the
       # release was assembled (sebastienrousseau/static-site-generator#678).
       #
@@ -263,10 +317,10 @@ jobs:
           gpgconf --kill all || true
           rm -rf "$GNUPGHOME"
 
-      - name: Upload release artifacts
+      - name: Upload signed release artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: release-artifacts
+          name: release-signed
           path: |
             target/package/*.crate
             target/package/*.bundle
@@ -280,6 +334,15 @@ jobs:
             SBOM.txt.asc
             SBOM.cdx.json.asc
           retention-days: 5
+
+  # ── Independent reproducibility gate ───────────────────────────────
+  # Rebuilds every .crate from a fresh checkout and requires the bytes
+  # the `artifacts` job produced (shared-reproducible-package.yml).
+  reproducible:
+    needs: artifacts
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reproducible-package.yml@139a826ba273b8f9feffff54795711f4df321928
+    with:
+      package-args: --all-features --allow-dirty
 
   # ── Cross-platform verification ─────────────────────────────────────
   # noyalib-wasm is a wasm-bindgen crate; end-to-end coverage is via
@@ -296,11 +359,13 @@ jobs:
       CARGO_TARGET_DIR: ${{ github.workspace }}/target-release-verify-ubuntu
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
         with:
           toolchain: stable
-      - uses: Swatinem/rust-cache@f0d9c3887740aee45f6153b24b3a6b815192ec16 # v2
-        with:
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with: # zizmor: ignore[cache-poisoning] test-only job: nothing it builds ships, and the key is written only by tag runs of this workflow
           workspaces: ". -> target-release-verify-ubuntu"
           key: release-verify-ubuntu
       - run: cargo test --all-features --locked
@@ -308,7 +373,7 @@ jobs:
   # ── GitHub Release ──────────────────────────────────────────────────
   github-release:
     name: GitHub Release
-    needs: [artifacts, cross-verify]
+    needs: [sign, reproducible, cross-verify]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     # `contents: write` — required to create the GitHub Release.
@@ -317,12 +382,13 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           fetch-depth: 0
 
       - name: Download artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: release-artifacts
+          name: release-signed
           path: artifacts
 
       - name: Create GitHub Release
@@ -416,6 +482,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
         with:
           toolchain: stable
@@ -432,9 +500,14 @@ jobs:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
         run: |
           set -uxo pipefail
+          # --no-verify: `cargo package` in `artifacts` already compiled
+          # the packaged sources, and `reproducible` proved this tag
+          # packages to the same bytes. Verifying again here would run
+          # every dependency's build script in the one job that holds
+          # the crates.io publish token.
           # Idempotent: tolerate a re-run where this version is already on
           # crates.io (e.g. re-tagging to fix a later, non-crates job).
-          out=$(cargo publish --all-features --locked 2>&1) && rc=0 || rc=$?
+          out=$(cargo publish --all-features --locked --no-verify 2>&1) && rc=0 || rc=$?
           echo "$out"
           if [ "$rc" -ne 0 ]; then
             echo "$out" | grep -qE 'already (exists|uploaded)' \
@@ -442,20 +515,23 @@ jobs:
             exit "$rc"
           fi
 
-  # ── Publish to npm (wasm-pack) ──────────────────────────────────────
-  npm-publish:
-    name: Publish @sebastienrousseau/noyalib-wasm to npm
+  # ── npm: build, then publish (separate jobs) ───────────────────────
+  # The build runs wasm-pack (which fetches wasm-bindgen) and every
+  # build script in the dependency graph, so it gets no OIDC token. The
+  # publish job holds `id-token: write` and builds nothing: it takes
+  # the built package from the artifact, re-checks its contents, and
+  # publishes with lifecycle scripts disabled.
+  npm-build:
+    name: Build the npm package
     needs: [github-release]
     if: startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      # `id-token: write` — needed for npm Trusted Publishing OIDC
-      # exchange + `--provenance` attestation.
-      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ github.ref }}
 
       - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
@@ -469,21 +545,8 @@ jobs:
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
+          package-manager-cache: false
           node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
-
-      # npm OIDC Trusted Publishing for the publish (not just provenance)
-      # requires npm >= 11.5.1. Node 24 ships a newer npm; assert it rather
-      # than run an unpinned `npm install -g npm@latest` (Scorecard flags
-      # any npm install without a lockfile as an unpinned dependency).
-      - name: Assert npm supports OIDC Trusted Publishing (>= 11.5.1)
-        run: |
-          node -e '
-            const v = require("child_process").execSync("npm --version").toString().trim();
-            const [a, b, c] = v.split(".").map(Number);
-            const ok = a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1)));
-            console.log(`npm ${v}: ${ok ? "supports" : "does NOT support"} OIDC trusted publishing`);
-            if (!ok) process.exit(1);'
 
       - name: Build (wasm-pack)
         run: |
@@ -498,13 +561,66 @@ jobs:
       - name: Gate the package contents
         run: scripts/check-npm-package.sh pkg
 
+      - name: Upload the npm package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: npm-package
+          path: pkg/
+          if-no-files-found: error
+          retention-days: 5
+
+  npm-publish:
+    name: Publish @sebastienrousseau/noyalib-wasm to npm
+    needs: [npm-build]
+    if: startsWith(github.ref, 'refs/tags/v') && github.event.inputs.dry_run != 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # `id-token: write`: needed for npm Trusted Publishing OIDC
+      # exchange + `--provenance` attestation.
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.ref }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          package-manager-cache: false
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      # npm OIDC Trusted Publishing for the publish (not just provenance)
+      # requires npm >= 11.5.1. Node 24 ships a newer npm; assert it rather
+      # than run an unpinned `npm install -g npm@latest` (Scorecard flags
+      # any npm install without a lockfile as an unpinned dependency).
+      - name: Assert npm supports OIDC Trusted Publishing (>= 11.5.1)
+        run: |
+          # shellcheck disable=SC2016 # single-quoted JavaScript, not shell
+          node -e '
+            const v = require("child_process").execSync("npm --version").toString().trim();
+            const [a, b, c] = v.split(".").map(Number);
+            const ok = a > 11 || (a === 11 && (b > 5 || (b === 5 && c >= 1)));
+            console.log(`npm ${v}: ${ok ? "supports" : "does NOT support"} OIDC trusted publishing`);
+            if (!ok) process.exit(1);'
+
+      - name: Download the npm package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm-package
+          path: pkg
+
+      - name: Gate the package contents (again, after the artifact round trip)
+        run: scripts/check-npm-package.sh pkg
+
       - name: Publish (Trusted Publishing + provenance)
         run: |
           cd pkg
           set -uxo pipefail
           # Idempotent: a re-tag re-run finds this version already on npm
           # (npm forbids republishing the same version -> E403).
-          out=$(npm publish --provenance --access public 2>&1) && rc=0 || rc=$?
+          out=$(npm publish --provenance --access public --ignore-scripts 2>&1) && rc=0 || rc=$?
           echo "$out"
           if [ "$rc" -ne 0 ]; then
             echo "$out" | grep -qiE 'cannot publish over|previously published|already exists' \

@@ -52,7 +52,7 @@ jobs:
     uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
 
   verify-signatures:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@139a826ba273b8f9feffff54795711f4df321928
 
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
@@ -60,7 +60,7 @@ jobs:
     # exercised end-to-end by wasm-bindgen-test under node (the
     # `wasm-test` job below) rather than by native `cargo test` on
     # macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@139a826ba273b8f9feffff54795711f4df321928
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
@@ -75,7 +75,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # master
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
         with:
           toolchain: stable
           targets: wasm32-unknown-unknown
@@ -87,6 +89,10 @@ jobs:
           node-version: '24'
       - name: wasm-pack test --node
         run: wasm-pack test --node
+      - name: Hostile input leaves the instance usable
+        run: |
+          wasm-pack build --dev --target nodejs --out-dir pkg-node
+          node scripts/check-hostile-input.js pkg-node
 
   coverage-gate:
     # Native coverage gates the pure-Rust core (src/core.rs, measured
@@ -94,7 +100,7 @@ jobs:
     # unreachable by native `cargo test` and is instead gated by the
     # `wasm-test` job above, so it is excluded here rather than
     # counted as an un-fixable coverage hole.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@139a826ba273b8f9feffff54795711f4df321928
     with:
       ignore-filename-regex: 'src/lib\.rs'
       fail-under-functions: 96
@@ -118,10 +124,12 @@ jobs:
       CARGO_TARGET_DIR: ${{ github.workspace }}/target-fuzz
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # master
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
         with:
           toolchain: nightly
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
         with:
           workspaces: ". -> target-fuzz"
           key: fuzz-regression
@@ -139,3 +147,14 @@ jobs:
             echo "── replaying $t against: ${dirs[*]}"
             cargo +nightly fuzz run "$t" "${dirs[@]}" -- -runs=0
           done
+
+  # ── Workflow gates shared with the core (v0.0.55) ───────────────────
+  # actionlint: workflow files are well-formed (shellcheck included).
+  # zizmor: workflow security audit, failing at medium and above.
+  # single-publisher: only release.yml may publish anything.
+  actionlint:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-actionlint.yml@139a826ba273b8f9feffff54795711f4df321928
+  zizmor:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-zizmor.yml@139a826ba273b8f9feffff54795711f4df321928
+  single-publisher:
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-single-publisher.yml@139a826ba273b8f9feffff54795711f4df321928
