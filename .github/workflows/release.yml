@@ -168,7 +168,7 @@ jobs:
   # ── Sign release artefacts (isolated from the build) ───────────────
   # Attestation, keyless signing and the detached GPG signatures run in
   # their own job, which downloads the finished artefacts and executes
-  # nothing from the source tree or its dependency graph. Until v0.0.56
+  # nothing from the source tree or its dependency graph. Until v0.0.55
   # they ran in `artifacts`, after `cargo package` and `cargo install`
   # had executed every build script in the graph; a build script can
   # append to $GITHUB_ENV and read later steps' environment, including
@@ -239,7 +239,7 @@ jobs:
       # which is what package maintainers and air-gapped consumers ask
       # for.
       #
-      # A step in the separate `sign` job since v0.0.56 (it used to be a
+      # A step in the separate `sign` job since v0.0.55 (it used to be a
       # step in `artifacts`, next to the build). It still cannot lose a
       # race with the release: `github-release` needs this job and
       # attaches only what it uploads as `release-signed`, so the `.asc`

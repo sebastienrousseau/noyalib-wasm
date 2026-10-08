@@ -148,7 +148,7 @@ jobs:
             cargo +nightly fuzz run "$t" "${dirs[@]}" -- -runs=0
           done
 
-  # ── Workflow gates shared with the core (v0.0.56) ───────────────────
+  # ── Workflow gates shared with the core (v0.0.55) ───────────────────
   # actionlint: workflow files are well-formed (shellcheck included).
   # zizmor: workflow security audit, failing at medium and above.
   # single-publisher: only release.yml may publish anything.
