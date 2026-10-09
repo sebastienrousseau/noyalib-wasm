@@ -11,6 +11,17 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.57] - 2026-10-09
+
+### Changed
+
+- Tracks `noyalib` 0.0.57 under the exact lockstep pin. The core's parse
+  fixes reach this crate unchanged, including the breaking ones: `0X1F`
+  and `0x-1` load as strings, folded scalars keep whitespace-only lines
+  indented past their content, a control character in a comment is an
+  error, empty lines after an escaped line break are line feeds, and
+  `- &a\n- x` loads as two items.
+
 ## [v0.0.56] - 2026-10-08
 
 ### Changed
