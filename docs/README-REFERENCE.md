@@ -72,7 +72,7 @@ wasm-pack build --release --target bundler
 
 ## Requirements
 
-- **Rust 1.86.0 or newer** to build from source: `rust-version` in
+- **Rust 1.89.0 or newer** to build from source: `rust-version` in
   the manifest, enforced by the `msrv-core` CI job on every push.
 - **Any tier-1 platform.** CI runs the tests on Linux, macOS, and
   Windows with the stable, beta, and nightly toolchains; stable is the
@@ -319,10 +319,10 @@ python3 -m http.server     # or any static-file server
 
 ## Compatibility
 
-**MSRV: Rust 1.86.0** stable — a deliberate policy choice: one floor across the whole lockstep set,
-with headroom for the dependency tree. No current dependency *requires*
-1.86 — this crate still compiles on 1.85. The whole lockstep set,
-including the core `noyalib` library, shares this floor. CI verifies the floor on every PR via
+**MSRV: Rust 1.89.0** stable, the floor shared across the noyalib family and the
+maintainer's other Rust crates (noyalib ADR-0014). No current
+dependency requires it. The whole lockstep set, including the core
+`noyalib` library, shares this floor. CI verifies the floor on every PR via
 the `Per-crate MSRV` workflow job. The bump policy lives in
 [`docs/POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#1-msrv-minimum-supported-rust-version).
 

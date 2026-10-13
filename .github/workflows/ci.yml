@@ -108,10 +108,10 @@ jobs:
       fail-under-regions: 93
 
   msrv-core:
-    # Verifies the declared 1.86.0 floor actually builds.
+    # Verifies the declared 1.89.0 floor actually builds.
     uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
     with:
-      toolchain: "1.86.0"
+      toolchain: "1.89.0"
 
   fuzz-regression:
     # Every fuzz target builds on every push, and the seed corpus (plus

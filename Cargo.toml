@@ -2,7 +2,7 @@
 name = "noyalib-wasm"
 version = "0.0.57"
 edition = "2024"
-rust-version = "1.86.0"
+rust-version = "1.89.0"
 license = "MIT OR Apache-2.0"
 description = "WebAssembly (wasm-bindgen) bindings for the noyalib YAML library — browser-ready parse / serialise / lossless edit"
 repository = "https://github.com/sebastienrousseau/noyalib-wasm"
