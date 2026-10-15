@@ -13,6 +13,12 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ## [v0.0.58] - Unreleased
 
+### Changed
+
+- Tracks `noyalib` 0.0.58 under the exact lockstep pin, so the core's
+  0.0.58 fixes reach this crate unchanged; the core's CHANGELOG lists
+  them.
+
 ### Changed: MSRV 1.86 to 1.89
 
 - **The minimum supported Rust version is now 1.89.0** (was 1.86.0),
@@ -23,6 +29,11 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 - **`scripts/verify-release-versions.sh` checks the MSRV.** Every
   statement of the floor (README, policies, rustdoc, CI) must match
   `rust-version`; each failed against the old statements.
+
+### Dependencies
+
+- `dtolnay/rust-toolchain` moves to `e2a55d2` in CI, from Dependabot
+  #116.
 
 ## [v0.0.57] - 2026-10-09
 

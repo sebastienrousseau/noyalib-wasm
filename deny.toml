@@ -70,4 +70,4 @@ allow-registry = ["https://github.com/rust-lang/crates.io-index"]
 # from its feat/vX.Y.Z branch until it publishes. The release gate
 # (scripts/verify-release-versions.sh) refuses a tag while this lists
 # anything, so it is emptied at the cut with the patch.
-allow-git = []
+allow-git = ["https://github.com/sebastienrousseau/noyalib"]
