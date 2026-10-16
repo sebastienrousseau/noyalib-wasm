@@ -28,9 +28,10 @@
 //!
 //! # MSRV
 //!
-//! **Rust 1.85.0** stable. The `wasm-bindgen` 0.2 ecosystem
-//! pulls helpers floored at 1.85; the core `noyalib` library
-//! still builds on **1.75**. See workspace
+//! **Rust 1.89.0** stable, the floor shared across the noyalib
+//! family and the maintainer's other Rust crates (noyalib
+//! ADR-0014). The manifest's `rust-version` is the contract and
+//! the `msrv-core` CI job verifies it. The bump policy is in
 //! [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#1-msrv-minimum-supported-rust-version).
 //!
 //! # Panics

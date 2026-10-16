@@ -77,7 +77,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
+      - uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f
         with:
           toolchain: stable
           targets: wasm32-unknown-unknown
@@ -108,10 +108,10 @@ jobs:
       fail-under-regions: 93
 
   msrv-core:
-    # Verifies the declared 1.86.0 floor actually builds.
+    # Verifies the declared 1.89.0 floor actually builds.
     uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@a1a2c8e4e48106dd099bc47e52680a9775d852be
     with:
-      toolchain: "1.86.0"
+      toolchain: "1.89.0"
 
   fuzz-regression:
     # Every fuzz target builds on every push, and the seed corpus (plus
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067
+      - uses: dtolnay/rust-toolchain@e2a55d2ffb04f378e9626c28d38b36d230d1e12f
         with:
           toolchain: nightly
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2

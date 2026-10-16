@@ -19,7 +19,7 @@ cd noyalib-wasm
 cargo test
 ```
 
-MSRV is **Rust 1.86.0**, identical across the family and CI-enforced.
+MSRV is **Rust 1.89.0**, identical across the family and CI-enforced.
 
 ## Developing against an unpublished core
 

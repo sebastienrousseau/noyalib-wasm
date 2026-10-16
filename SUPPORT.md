@@ -42,7 +42,7 @@ in [`SECURITY.md`](SECURITY.md).
   Under Cargo's SemVer rules a `0.x` patch may carry breaking changes;
   pin a specific version and read [`CHANGELOG.md`](CHANGELOG.md) before
   upgrading.
-- Minimum supported Rust version: **1.86**, enforced in CI.
+- Minimum supported Rust version: **1.89**, enforced in CI.
 
 ## Response expectations
 

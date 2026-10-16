@@ -16,7 +16,7 @@
   <a href="https://docs.rs/noyalib-wasm"><img src="https://img.shields.io/badge/docs.rs-noyalib--wasm-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" alt="Docs" /></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/noyalib-wasm"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/noyalib-wasm?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
   <a href="LICENSE-APACHE"><img src="https://img.shields.io/badge/license-Apache--2.0%20OR%20MIT-blue.svg?style=for-the-badge" alt="License: Apache-2.0 OR MIT" /></a>
-  <a href="https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/POLICIES.md"><img src="https://img.shields.io/badge/MSRV-1.86.0-93450a.svg?style=for-the-badge&logo=rust" alt="MSRV 1.86.0" /></a>
+  <a href="https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/POLICIES.md"><img src="https://img.shields.io/badge/MSRV-1.89.0-93450a.svg?style=for-the-badge&logo=rust" alt="MSRV 1.89.0" /></a>
 </p>
 
 ---
@@ -58,7 +58,7 @@
 ### As a JavaScript library
 
 ```bash
-npm install @sebastienrousseau/noyalib-wasm@0.0.57
+npm install @sebastienrousseau/noyalib-wasm@0.0.58
 ```
 
 `pnpm add` and `yarn add` work with the same package. To build from source:
@@ -69,13 +69,13 @@ wasm-pack build --release --target bundler
 
 ## Requirements
 
-- Rust **1.86.0 or newer** and `wasm-pack` when building from source.
+- Rust **1.89.0 or newer** and `wasm-pack` when building from source.
 - A WebAssembly-capable browser, Node.js, Deno, Bun, or edge runtime.
-- The crate pins `noyalib` at exactly `=0.0.57` under the lockstep contract.
+- The crate pins `noyalib` at exactly `=0.0.58` under the lockstep contract.
 
 | Surface | Minimum | Enforcement |
 | :--- | :---: | :--- |
-| Rust crate | Rust 1.86.0 | manifest and MSRV CI |
+| Rust crate | Rust 1.89.0 | manifest and MSRV CI |
 | JavaScript package | WebAssembly runtime | Node and browser CI |
 
 ## Quick Start
