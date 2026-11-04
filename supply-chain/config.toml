@@ -60,6 +60,10 @@ criteria = "safe-to-run"
 version = "0.0.58"
 criteria = "safe-to-deploy"
 
+[[exemptions.serde_json]]
+version = "1.0.154"
+criteria = "safe-to-run"
+
 [[exemptions.smallvec]]
 version = "1.16.1"
 criteria = "safe-to-deploy"
