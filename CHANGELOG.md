@@ -11,6 +11,14 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.60] - 2026-11-10
+
+### Changed
+
+- Track the exact published `noyalib = "=0.0.60"` dependency and align
+  package and installation metadata. Public APIs, features and Rust 1.89.0
+  support remain unchanged.
+
 ## [v0.0.59] - 2026-11-10
 
 ### Changed

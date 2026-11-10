@@ -4,8 +4,8 @@
 
 ## Version and dependency policy
 
-`noyalib-wasm` releases in strict lockstep with `noyalib`. Version 0.0.59 pins
-the core at exactly `=0.0.59`. Release work uses `feat/v0.0.59`; each subsequent
+`noyalib-wasm` releases in strict lockstep with `noyalib`. Version 0.0.60 pins
+the core at exactly `=0.0.60`. Release work uses `feat/v0.0.60`; each subsequent
 iteration increments exactly 0.0.1.
 
 ## Minimum Rust version
