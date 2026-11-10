@@ -65,6 +65,12 @@ criteria = "safe-to-deploy"
 delta = "0.0.58 -> 0.0.59"
 notes = "Reviewed published archive SHA-256 8d99aeedb93b24d2416edd7de7946ddedce9942af917cbc78b0d9a9ecca83bad and full 0.0.58 source delta: bounded portable float helpers, budgeted source retention and validated atomic CST edits. Unsafe code remains forbidden; no new ambient capabilities. See supply-chain/reviews/v0.0.59.md for provenance and validation boundaries."
 
+[[audits.noyalib]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.0.59 -> 0.0.60"
+notes = "Reviewed the actual 0.0.59 to 0.0.60 metadata/source delta. Runtime Rust and ambient capabilities are unchanged, apart from the adapter crate-level version example. Core registry SHA-256 c4f58e0d7f94aac1ff656e07a05512093b0a0f866f5778f94e84909f50fc3157. See supply-chain/reviews/v0.0.60.md."
+
 [[audits.pin-project-lite]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
