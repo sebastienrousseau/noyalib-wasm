@@ -284,3 +284,27 @@ fn replace_span_checks_the_whole_edited_source() {
     assert_eq!(doc.to_string(), source);
     instance_still_works();
 }
+
+#[wasm_bindgen_test]
+fn oversized_array_is_refused_before_expanding_any_children() {
+    use std::cell::Cell;
+    use std::rc::Rc;
+    use wasm_bindgen::closure::Closure;
+
+    let read = Rc::new(Cell::new(false));
+    let flag = Rc::clone(&read);
+    let getter = Closure::wrap(Box::new(move || {
+        flag.set(true);
+        JsValue::UNDEFINED
+    }) as Box<dyn FnMut() -> JsValue>);
+    let array = js_sys::Array::new_with_length(1_000_001);
+    let descriptor = js_sys::Object::new();
+    js_sys::Reflect::set(&descriptor, &"get".into(), getter.as_ref()).unwrap();
+    assert!(js_sys::Reflect::define_property(&array, &"0".into(), &descriptor).unwrap());
+    assert!(stringify(array.into()).is_err());
+    assert!(
+        !read.get(),
+        "over-budget containers must be rejected before reading children"
+    );
+    assert!(parse("still: usable\n").is_ok());
+}

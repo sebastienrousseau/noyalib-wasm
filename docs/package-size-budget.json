@@ -1,0 +1,12 @@
+{
+  "artifact": "noyalib_wasm_bg.wasm",
+  "baseline": {
+    "package": "@sebastienrousseau/noyalib-wasm@0.0.60",
+    "sha256": "98a17db5e753e73bda6b71bb20bcfdc102f8c1bde95a41fb153b2d4bdad76571",
+    "raw_bytes": 598818,
+    "gzip_level_9_bytes": 208595
+  },
+  "raw_limit_bytes": 628759,
+  "gzip_level_9_limit_bytes": 219025,
+  "rationale": "Allow at most 5% growth over the measured published module; review any increase with a source and consumer impact explanation."
+}

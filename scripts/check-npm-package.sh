@@ -6,6 +6,7 @@
 # about the target's layout; an old wasm-pack paired with a new
 # wasm-bindgen dropped noyalib_wasm_bg.js from the 0.0.35 package.
 set -euo pipefail
+source_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 pkg=${1:-pkg}
 cd "$pkg"
 entry=$(node -e 'const p=require("./package.json");console.log(p.module||p.main)')
@@ -24,6 +25,13 @@ for imp in $(grep -oE 'from "\./[^"]+"' "$entry" | sed -E 's/from "\.\/([^"]+)"/
 done
 for f in noyalib_wasm_bg.wasm noyalib_wasm.d.ts; do
   grep -qx "$f" <<<"$packed" || { echo "tarball leaves out $f"; rc=1; }
+done
+for license in LICENSE-MIT LICENSE-APACHE; do
+  if [ ! -f "$license" ] || ! cmp -s "$source_root/$license" "$license"; then
+    echo "package $license is missing or differs from the declared source license"
+    rc=1
+  fi
+  grep -qx "$license" <<<"$packed" || { echo "tarball leaves out $license"; rc=1; }
 done
 [ "$rc" = 0 ] && echo "package contents ok: $(wc -l <<<"$packed" | tr -d ' ') files"
 exit "$rc"

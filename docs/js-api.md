@@ -12,11 +12,12 @@ For build tool / bundler integration see
 ## Install
 
 ```sh
-npm install noyalib-wasm
+npm install @sebastienrousseau/noyalib-wasm
 ```
 
-The package ships ESM, CJS, and `web` targets in one bundle;
-modern bundlers pick the right one automatically.
+The published package contains bundler-target ESM and a `.wasm` import.
+It has no default `init` export and no `web` or `nodejs` package subpaths.
+For source-built web or Node targets, see [bundling](bundling.md).
 
 ## Simple API
 
@@ -26,7 +27,7 @@ Parse YAML to a plain JS object / array / scalar. Throws on parse
 error.
 
 ```ts
-import { parse } from "noyalib-wasm";
+import { parse } from "@sebastienrousseau/noyalib-wasm";
 
 const cfg = parse(`
 name: noyalib
@@ -50,7 +51,7 @@ levels (the parser's default depth limit), or if it has more than
 1,000,000 elements counting shared references once per use.
 
 ```ts
-import { stringify } from "noyalib-wasm";
+import { stringify } from "@sebastienrousseau/noyalib-wasm";
 
 const yaml = stringify({ name: "noyalib", port: 8080 });
 // "name: noyalib\nport: 8080\n"
@@ -78,7 +79,7 @@ Fetch a single value from a YAML string by dotted path. Returns
 `null` if the path doesn't exist.
 
 ```ts
-import { getPath } from "noyalib-wasm";
+import { getPath } from "@sebastienrousseau/noyalib-wasm";
 
 const host = getPath(yamlString, "server.host");
 const firstItem = getPath(yamlString, "items[0].name");
@@ -86,12 +87,12 @@ const firstItem = getPath(yamlString, "items[0].name");
 
 ### `merge(base: string, override: string): string`
 
-Deep-merge two YAML documents — the override values win, but
-both documents' comments and structure are preserved where
-possible.
+Deep-merge the parsed values of two YAML documents. Override values win.
+This simple API re-emits YAML and does not preserve comments or source
+formatting; use `WasmDocument` for targeted source-preserving edits.
 
 ```ts
-import { merge } from "noyalib-wasm";
+import { merge } from "@sebastienrousseau/noyalib-wasm";
 
 const merged = merge(
   "name: app\nport: 8080\n",
@@ -114,7 +115,7 @@ input bytes exactly. Edits rewrite only the touched span.
 Parse a YAML string into a Document. Throws on parse error.
 
 ```ts
-import { WasmDocument } from "noyalib-wasm";
+import { WasmDocument } from "@sebastienrousseau/noyalib-wasm";
 
 const doc = new WasmDocument(`
 # Production config
@@ -228,7 +229,7 @@ wasm-bindgen surface. Editor autocompletion works out of the box
 in any TypeScript project.
 
 ```ts
-import type { WasmDocument } from "noyalib-wasm";
+import type { WasmDocument } from "@sebastienrousseau/noyalib-wasm";
 
 function bumpVersion(yamlSource: string, newVersion: string): string {
   const doc: WasmDocument = new WasmDocument(yamlSource);

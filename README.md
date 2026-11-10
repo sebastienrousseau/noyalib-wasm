@@ -53,6 +53,12 @@
 
 ---
 
+## Development version
+
+This branch prepares unreleased v0.0.61. Versioned Cargo examples describe
+that upcoming release; use a published version for registry installation
+until it ships. Local verification uses the sibling core source explicitly.
+
 ## Install
 
 ### As a JavaScript library
@@ -81,9 +87,8 @@ wasm-pack build --release --target bundler
 ## Quick Start
 
 ```js
-import init, { parse, getPath, WasmDocument } from "@sebastienrousseau/noyalib-wasm";
+import { parse, getPath, WasmDocument } from "@sebastienrousseau/noyalib-wasm";
 
-await init();
 
 const value = parse("host: api.example.com\nport: 8080\n");
 const port = getPath("port: 8080\n", "port");

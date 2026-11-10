@@ -11,6 +11,19 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.61] - Unreleased
+
+### Changed
+
+- Prepare the next lockstep version for the ecosystem assurance work.
+  Release dates and completed changes are recorded after verification.
+
+### Fixed
+
+- Reject oversized JS containers before visiting their children.
+- Verify browser and installed npm consumers, including TypeScript.
+- Include both declared licenses and check optimized module size.
+
 ## [v0.0.60] - 2026-11-10
 
 ### Changed

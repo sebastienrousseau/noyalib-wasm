@@ -1,0 +1,8 @@
+{
+  "name": "noyalib-wasm-typescript-consumer-tests",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}
