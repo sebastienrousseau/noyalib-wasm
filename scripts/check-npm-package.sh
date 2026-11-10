@@ -12,11 +12,12 @@ cd "$pkg"
 entry=$(node -e 'const p=require("./package.json");console.log(p.module||p.main)')
 [ -f "$entry" ] || { echo "entry module $entry missing"; exit 1; }
 # npm 11 prints an array, npm 12 an object keyed by package name.
-packed=$(npm pack --dry-run --json 2>/dev/null | node -e '
+metadata=$(npm pack --dry-run --json --ignore-scripts) || { echo "npm pack could not inspect the generated package" >&2; exit 1; }
+packed=$(node -e '
 const d=JSON.parse(require("fs").readFileSync(0,"utf8"));
 const first=Array.isArray(d)?d[0]:Object.values(d)[0];
 if(!first||!Array.isArray(first.files)){console.error("unexpected npm pack --json shape");process.exit(2);}
-for(const f of first.files)console.log(f.path)')
+for(const f of first.files)console.log(f.path)' <<<"$metadata")
 [ -n "$packed" ] || { echo "npm pack --dry-run --json listed no files"; exit 1; }
 rc=0
 for imp in $(grep -oE 'from "\./[^"]+"' "$entry" | sed -E 's/from "\.\/([^"]+)"/\1/' | sort -u); do

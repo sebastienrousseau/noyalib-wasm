@@ -86,7 +86,8 @@ are retained with exact runtime/tool versions.
 
 CI executes a generated web loader in headless Chromium and installs a
 local bundler tarball into a fresh npm project. The latter checks both
-license texts, compiles a strict TypeScript consumer, and executes parse
-and edit calls through the installed module. Node 24.22.2 was verified
-locally; its direct WebAssembly import still reports an experimental
-feature warning. This does not establish support for every Node release.
+license texts and compiles a strict TypeScript consumer. It runs the
+installed module under Node and bundles that same tarball with webpack
+5.112.2 for Chromium. Both consumers exercise parse and lossless edits.
+Node 24.22.2 direct WebAssembly import reports an experimental feature
+warning. Other Node releases and bundlers need their own verification.

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "webpack": "5.112.2"
   }
 }

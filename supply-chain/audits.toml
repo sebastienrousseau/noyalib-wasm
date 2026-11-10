@@ -71,6 +71,12 @@ criteria = "safe-to-deploy"
 delta = "0.0.59 -> 0.0.60"
 notes = "Reviewed the actual 0.0.59 to 0.0.60 metadata/source delta. Runtime Rust and ambient capabilities are unchanged, apart from the adapter crate-level version example. Core registry SHA-256 c4f58e0d7f94aac1ff656e07a05512093b0a0f866f5778f94e84909f50fc3157. See supply-chain/reviews/v0.0.60.md."
 
+[[audits.noyalib]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.0.60 -> 0.0.61"
+notes = "Compared the signed v0.0.60 core source to v0.0.61: no runtime source, feature, dependency or target declaration changes. Registry identity still requires verification."
+
 [[audits.pin-project-lite]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"

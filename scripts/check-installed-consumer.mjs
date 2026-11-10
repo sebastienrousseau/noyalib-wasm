@@ -4,6 +4,7 @@
 // Verify a real npm install of the local generated bundler tarball.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { copyFile, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -13,6 +14,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const fixture = join(root, 'tests/typescript');
 const pkg = resolve(process.argv[2] || 'pkg');
+const browser = process.argv[3];
 const scratch = await mkdtemp(join(tmpdir(), 'noyalib-installed-consumer-'));
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const tsc = join(fixture, 'node_modules/.bin/tsc');
@@ -47,7 +49,28 @@ try {
       assert.equal(doc.toString(), '# keep\\nport: 9090\\n');
     } finally { doc.free(); }
   `]);
-  console.log(JSON.stringify({ status: 'passed', version: declared.version,
+  let bundle;
+  if (browser) {
+    const webpack = createRequire(join(fixture, 'package.json'))('webpack');
+    const entry = join(scratch, 'browser-entry.mjs');
+    const bundled = join(scratch, 'bundle');
+    await writeFile(entry, "export * from '@sebastienrousseau/noyalib-wasm';\n");
+    const compiler = webpack({
+      context: scratch, mode: 'production', target: 'web', entry, devtool: false,
+      experiments: { asyncWebAssembly: true },
+      output: { path: bundled, filename: 'noyalib_wasm.js', module: true, library: { type: 'module' } },
+      optimization: { minimize: false },
+    });
+    await new Promise((resolve, reject) => compiler.run((error, stats) => {
+      compiler.close(closeError => {
+        const failure = error || closeError || (stats.hasErrors() && Error(stats.toString('errors-only')));
+        if (failure) reject(failure); else resolve();
+      });
+    }));
+    const script = join(root, 'scripts/check-browser-consumer.mjs');
+    bundle = { webpack: webpack.version, ...JSON.parse(run(process.execPath, [script, bundled, browser, '--bundler'])) };
+  }
+  console.log(JSON.stringify({ status: 'passed', version: declared.version, bundle,
     node: process.version, typescript: run(tsc, ['--version']).trim(),
     sha256: createHash('sha256').update(bytes).digest('hex'),
     files: packed.files.map(file => file.path) }, null, 2));

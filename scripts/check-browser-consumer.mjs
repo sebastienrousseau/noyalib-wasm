@@ -3,6 +3,7 @@
 
 // Execute generated web-target exports in a fresh headless Chromium profile.
 // Usage: node scripts/check-browser-consumer.mjs pkg-web /path/to/chrome
+// Add --bundler for a web bundle whose WASM module is initialized on import.
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
@@ -13,11 +14,12 @@ import { setTimeout as delay } from 'node:timers/promises';
 
 const packageRoot = resolve(process.argv[2] || 'pkg-web');
 const browser = process.argv[3] || process.env.CHROME_BIN || 'google-chrome';
+const sourceTarget = process.argv[4] !== '--bundler';
 const profile = await mkdtemp(join(tmpdir(), 'noyalib-browser-check-'));
 const page = `<!doctype html><meta charset="utf-8"><body><script type="module">
 try {
   const w = await import('/noyalib_wasm.js');
-  await w.default();
+  if (${sourceTarget}) await w.default();
   let checks = 0;
   function check(value, message) { if (!value) throw Error(message); checks++; }
   for (const name of ['parse', 'parseJson', 'stringify', 'validateJson', 'getPath', 'merge', 'WasmDocument']) {

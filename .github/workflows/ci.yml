@@ -106,7 +106,7 @@ jobs:
           scripts/check-npm-package.sh pkg
           npm ci --ignore-scripts --prefix tests/typescript
           npm audit --package-lock-only --ignore-scripts --prefix tests/typescript
-          node scripts/check-installed-consumer.mjs pkg
+          node scripts/check-installed-consumer.mjs pkg "$(command -v google-chrome)"
 
   coverage-gate:
     # Native coverage gates the pure-Rust core (src/core.rs, measured
