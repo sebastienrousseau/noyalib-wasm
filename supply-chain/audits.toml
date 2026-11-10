@@ -59,6 +59,12 @@ criteria = "safe-to-deploy"
 delta = "0.0.49 -> 0.0.50"
 notes = "Reviewed backpressured async streams and per-document frame limits; Tokio tests, clippy, and strict docs passed."
 
+[[audits.noyalib]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.0.58 -> 0.0.59"
+notes = "Reviewed published archive SHA-256 8d99aeedb93b24d2416edd7de7946ddedce9942af917cbc78b0d9a9ecca83bad and full 0.0.58 source delta: bounded portable float helpers, budgeted source retention and validated atomic CST edits. Unsafe code remains forbidden; no new ambient capabilities. See supply-chain/reviews/v0.0.59.md for provenance and validation boundaries."
+
 [[audits.pin-project-lite]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
@@ -180,6 +186,12 @@ criteria = "safe-to-deploy"
 user-id = 3618 # David Tolnay (dtolnay)
 start = "2019-08-18"
 end = "2027-07-27"
+
+[[trusted.serde_json]]
+criteria = "safe-to-deploy"
+user-id = 3618 # David Tolnay (dtolnay)
+start = "2019-02-28"
+end = "2027-10-27"
 
 [[trusted.syn]]
 criteria = "safe-to-deploy"
