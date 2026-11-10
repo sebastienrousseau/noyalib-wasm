@@ -152,14 +152,13 @@ dependencies = [
 
 [[package]]
 name = "noyalib"
-version = "0.0.58"
+version = "0.0.59"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fad8f1a552070f6ba5f60f25e880f7b6daeda8fe138f589345141d31a21a3bb"
+checksum = "8d99aeedb93b24d2416edd7de7946ddedce9942af917cbc78b0d9a9ecca83bad"
 dependencies = [
  "hashbrown",
  "indexmap",
  "itoa",
- "libm",
  "memchr",
  "rustc-hash",
  "ryu",
@@ -170,7 +169,7 @@ dependencies = [
 
 [[package]]
 name = "noyalib-wasm"
-version = "0.0.58"
+version = "0.0.59"
 dependencies = [
  "console_error_panic_hook",
  "js-sys",
@@ -359,9 +358,9 @@ dependencies = [
 
 [[package]]
 name = "tokio"
-version = "1.53.2"
+version = "1.53.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e95f91fcc7a621e8b030f6aa23c71fe9838ae2fb4d8118b75602a328f5144044"
+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
 dependencies = [
  "pin-project-lite",
 ]
