@@ -308,3 +308,11 @@ fn oversized_array_is_refused_before_expanding_any_children() {
     );
     assert!(parse("still: usable\n").is_ok());
 }
+
+#[wasm_bindgen_test]
+fn root_shape_edit_preserves_utf8_source() {
+    let mut document = WasmDocument::new("-").unwrap();
+    let replacement = "\u{799}\r#";
+    document.set("", replacement).unwrap();
+    assert_eq!(document.to_string(), replacement);
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "name": "wasm-bindgen",
+    "old": "0.2.129",
+    "new": "0.2.130",
+    "changed_rust": [
+      "src/externref.rs",
+      "src/lib.rs",
+      "src/nullable.rs",
+      "src/describe.rs",
+      "src/sys.rs",
+      "src/closure.rs",
+      "src/cache/intern.rs",
+      "src/rt/mod.rs",
+      "src/rt/marker.rs",
+      "src/convert/closures.rs",
+      "src/convert/mod.rs",
+      "src/convert/impls.rs",
+      "src/convert/slices.rs",
+      "src/convert/traits.rs"
+    ],
+    "diff_sha256": "a9aeab9f6c7ca3b36fb5fae5c57c103c27c0244ff7e2e029c7f5114174ee9199",
+    "registry_checksum": "a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": ""
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-macro",
+    "old": "0.2.129",
+    "new": "0.2.130",
+    "changed_rust": [],
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "registry_checksum": "6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/macro"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-macro-support",
+    "old": "0.2.129",
+    "new": "0.2.130",
+    "changed_rust": [
+      "src/encode.rs",
+      "src/generics.rs",
+      "src/codegen.rs",
+      "src/ast.rs",
+      "src/parser.rs",
+      "src/hash.rs"
+    ],
+    "diff_sha256": "4bc18239068f8cce9a3cf1feb79e11617d7fd73ca3901a7a1aee774d944d10f0",
+    "registry_checksum": "2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/macro-support"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-shared",
+    "old": "0.2.129",
+    "new": "0.2.130",
+    "changed_rust": [
+      "src/lib.rs",
+      "src/schema_hash_approval.rs",
+      "src/tys.rs"
+    ],
+    "diff_sha256": "ff1abdeaff195340b2eb109a43691950727fa0786b9da9837ab765b8d1b0e087",
+    "registry_checksum": "3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/shared"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-futures",
+    "old": "0.4.79",
+    "new": "0.4.80",
+    "changed_rust": [],
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "registry_checksum": "5e14e0327cb5368ad60ccb22d04a9827a693c95a926d8d125e9fa39e0baec501",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/futures"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-test",
+    "old": "0.3.79",
+    "new": "0.3.80",
+    "changed_rust": [
+      "src/rt/criterion/routine.rs",
+      "src/rt/criterion/analysis.rs"
+    ],
+    "diff_sha256": "fa451cba0658f1c75eb7da9763ce0a495cdbfcbde5d8292db321fb9ff432f223",
+    "registry_checksum": "5b4913c0ade07e01ab574b20d2741538f070efa12cb7a1a1e2d5df6ea41cf522",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/test"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-test-macro",
+    "old": "0.3.79",
+    "new": "0.3.80",
+    "changed_rust": [],
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "registry_checksum": "238071aa4c5b268e57d21018621a2e2403c29dd11c55dbdf790ed47fdb9241c0",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/test-macro"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "wasm-bindgen-test-shared",
+    "old": "0.2.129",
+    "new": "0.2.130",
+    "changed_rust": [],
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "registry_checksum": "9ab365ce29ba0232367502b2894556ae77a9c214d33dbf453fdba7f586905918",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/test-shared"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  },
+  {
+    "name": "js-sys",
+    "old": "0.3.106",
+    "new": "0.3.107",
+    "changed_rust": [
+      "src/lib.rs",
+      "src/Temporal.rs",
+      "src/futures/mod.rs",
+      "src/futures/jspi.rs",
+      "src/futures/task/multithread.rs",
+      "src/futures/task/wait_async_polyfill.rs"
+    ],
+    "diff_sha256": "31208e0b086daea0b324c75cacea05a97ca7ce7af48c798dccdbc9757e3f1d02",
+    "registry_checksum": "8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a",
+    "vcs": {
+      "git": {
+        "sha1": "c93b8ae848d4d9e6beaeaf9516e18a7cadd818a2"
+      },
+      "path_in_vcs": "crates/js-sys"
+    },
+    "msrv": "1.81",
+    "changed_executable_assets": []
+  }
+]

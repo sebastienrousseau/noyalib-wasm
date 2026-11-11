@@ -15,6 +15,10 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ### Changed
 
+- Update wasm-bindgen-test to 0.3.80 and its matching runtime bindings
+  to wasm-bindgen 0.2.130, contributed by Dependabot in #123. Review both
+  Cargo locks and record nine dependency delta audits.
+- Exercise root-shape edits with UTF-8 through the actual WASM export.
 - Preserve unsigned radix string keys during serialization. Escalate CST
   root shape changes to a full parse to preserve UTF-8 token boundaries.
 - Core parsing now preserves anchor declaration order and clips only a

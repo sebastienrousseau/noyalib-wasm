@@ -36,6 +36,12 @@ who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
 delta = "1.0.15 -> 1.0.18"
 
+[[audits.js-sys]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.3.106 -> 0.3.107"
+notes = "Reviewed JS declarations, generic Promise rejection typing and futures propagation, target-width JSPI tokens and atomics indices, nullable returns, and Temporal changes gated behind temporal plus unstable cfg. No new default feature or changed build script. Node and Rust 1.89 wasm32 checks passed. Registry SHA-256 8dc09d2154098bbf4ef54eab6b117a3c24cbbffe94046b16ee6d6d4510584d3a. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
 [[audits.libm]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
@@ -142,15 +148,63 @@ who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
 delta = "2.3.3 -> 2.4.0"
 
+[[audits.wasm-bindgen]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.2.129 -> 0.2.130"
+notes = "Reviewed lifetime-preserving ErasableGeneric representations, fallible argument conversion and reverse cleanup, Rc ownership and borrow helpers, fixed externref slots, nullable ABI sentinels and encoded sequence ownership. No changed build scripts. Node and Rust 1.89 wasm32 checks passed. Registry SHA-256 a0181c14ddd6c7b8b0b0132a5f1ea2f32be0d893cd3ea97b6e3b28886b8a3d1c. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
+[[audits.wasm-bindgen-futures]]
+who = "OpenAI Codex"
+criteria = "safe-to-run"
+delta = "0.4.79 -> 0.4.80"
+notes = "Rust sources are byte-identical; exact wasm-bindgen and js-sys pins advance together. No changed executable assets. Registry SHA-256 5e14e0327cb5368ad60ccb22d04a9827a693c95a926d8d125e9fa39e0baec501. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
+[[audits.wasm-bindgen-macro]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.2.129 -> 0.2.130"
+notes = "Rust sources are byte-identical; manifest advances the exact macro-support pin. No changed executable assets. Registry SHA-256 6e931a02a39abdbf66966fc35902b5ed58344750a70885bed4ebb3d8eaf28ed9. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
 [[audits.wasm-bindgen-macro-support]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
 delta = "0.2.92 -> 0.2.126"
 
+[[audits.wasm-bindgen-macro-support]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.2.129 -> 0.2.130"
+notes = "Reviewed argument cleanup before JS throws, deferred async rejection, nullable and sequence code generation, module-qualified descriptor symbols, attribute conflict handling and lifetime bounds. No new dependencies or changed build scripts. Registry SHA-256 2ca4b54280e455bd831e33a6b8e734baf432fe63fbc35c42ac14ce67a043a53a. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
 [[audits.wasm-bindgen-shared]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
 delta = "0.2.92 -> 0.2.126"
+
+[[audits.wasm-bindgen-shared]]
+who = "OpenAI Codex"
+criteria = "safe-to-deploy"
+delta = "0.2.129 -> 0.2.130"
+notes = "Reviewed schema 0.2.130, module path encoding and FNV descriptor hash, sequence-mode and nullable tags. Requires matching CLI; no ambient capabilities. Registry SHA-256 3b1f9c3798725016c6ee5f2f57869ec0831e8bbc0ab0310a86e787e97f41389e. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
+[[audits.wasm-bindgen-test]]
+who = "OpenAI Codex"
+criteria = "safe-to-run"
+delta = "0.3.79 -> 0.3.80"
+notes = "Reviewed removal of async-trait in favor of async trait methods and an impl Routine parameter. Test runtime behavior exercised by 31 passing Node tests. Registry SHA-256 5b4913c0ade07e01ab574b20d2741538f070efa12cb7a1a1e2d5df6ea41cf522. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
+[[audits.wasm-bindgen-test-macro]]
+who = "OpenAI Codex"
+criteria = "safe-to-run"
+delta = "0.3.79 -> 0.3.80"
+notes = "Rust sources are byte-identical; only release metadata and exact dependency pins change. No changed executable assets. Registry SHA-256 238071aa4c5b268e57d21018621a2e2403c29dd11c55dbdf790ed47fdb9241c0. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
+
+[[audits.wasm-bindgen-test-shared]]
+who = "OpenAI Codex"
+criteria = "safe-to-run"
+delta = "0.2.129 -> 0.2.130"
+notes = "Rust sources are byte-identical; only release metadata changes. No changed executable assets. Registry SHA-256 9ab365ce29ba0232367502b2894556ae77a9c214d33dbf453fdba7f586905918. Review details: supply-chain/reviews/wasm-bindgen-0.2.130.md."
 
 [[audits.zmij]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
