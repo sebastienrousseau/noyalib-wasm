@@ -75,7 +75,7 @@ notes = "Reviewed the actual 0.0.59 to 0.0.60 metadata/source delta. Runtime Rus
 who = "OpenAI Codex"
 criteria = "safe-to-deploy"
 delta = "0.0.60 -> 0.0.61"
-notes = "Compared the signed v0.0.60 core source to v0.0.61: no runtime source, feature, dependency or target declaration changes. Registry identity still requires verification."
+notes = "Reviewed core 87261ce27452445e0f5324077e62b3582cc98be3 against signed v0.0.60: iterative first-match queries and failed-state memoization, binary-string quoting, EOF clip behavior and declaration-ordered anchor resolution. Regressions cover typed, value, CST and alloc-only paths. No feature, dependency, target or MSRV changes. See supply-chain/reviews/v0.0.61.md; registry identity and independent review remain separate."
 
 [[audits.pin-project-lite]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
