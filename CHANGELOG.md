@@ -15,6 +15,11 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ### Changed
 
+- Core parsing now preserves anchor declaration order and clips only a
+  final line break present in the input. These are breaking parse behavior
+  corrections under the family's patch-version policy.
+- Release dry runs guard signing and GitHub release creation. Version
+  checks include every tracked Cargo lock.
 - Prepare the next lockstep version for the ecosystem assurance work.
   Release dates and completed changes are recorded after verification.
 

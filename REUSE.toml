@@ -81,6 +81,7 @@ path = [
     "fuzz/Cargo.toml",
     "fuzz/Cargo.lock",
     "fuzz/corpus/**",
+    "fuzz/regressions/**",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Noyalib"
