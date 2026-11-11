@@ -61,3 +61,28 @@ test('shutdown kills an unresponsive process and can be called again',
     await closed;
   }
 });
+
+
+test('private process-group cleanup closes descendants after the parent exits',
+  {skip: process.platform === 'win32'}, async () => {
+  const parent = `
+    const {spawn} = require('node:child_process');
+    spawn(process.execPath, ['-e', 'setInterval(() => {}, 1000)'],
+      {stdio: ['ignore', 'ignore', 'inherit']});
+    setTimeout(() => process.exit(0), 50);
+  `;
+  const child = spawn(process.execPath, ['-e', parent],
+    {detached: true, stdio: ['ignore', 'ignore', 'pipe']});
+  const closed = once(child, 'close');
+  const stop = trackBrowserShutdown(child, 100, {processGroup: true});
+  try {
+    await once(child, 'exit');
+    await stop();
+    await closed;
+    await stop();
+  } finally {
+    try { process.kill(-child.pid, 'SIGKILL'); }
+    catch (error) { if (error.code !== 'ESRCH') throw error; }
+    await closed;
+  }
+});

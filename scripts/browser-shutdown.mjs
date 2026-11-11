@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 
 // Register immediately after spawn: close also waits for inherited stdio.
-export function trackBrowserShutdown(child, graceMs = 3000) {
+export function trackBrowserShutdown(child, graceMs = 3000, {processGroup = false} = {}) {
   let closed = false;
   const closure = new Promise(resolve => child.once('close', () => {
     closed = true;
@@ -17,12 +17,18 @@ export function trackBrowserShutdown(child, graceMs = 3000) {
     } finally { clearTimeout(timer); }
   };
   const running = () => child.pid && child.exitCode === null && child.signalCode === null;
+  const signal = name => {
+    if (processGroup && child.pid) {
+      try { process.kill(-child.pid, name); }
+      catch (error) { if (error.code !== 'ESRCH') throw error; }
+    } else if (running()) child.kill(name);
+  };
   return async () => {
     if (closed) return;
-    if (running()) child.kill('SIGTERM');
+    signal('SIGTERM');
     await waitForClose();
     if (closed) return;
-    if (running()) child.kill('SIGKILL');
+    signal('SIGKILL');
     await waitForClose();
     if (!closed) throw Error('browser streams did not close after shutdown');
   };

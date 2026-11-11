@@ -88,8 +88,8 @@ let stderr = '';
 try {
   child = spawn(browser, ['--headless', '--disable-gpu', '--remote-debugging-port=0',
     '--remote-debugging-address=127.0.0.1', `--user-data-dir=${profile}`, 'about:blank'],
-    {stdio: ['ignore', 'ignore', 'pipe']});
-  stopBrowser = trackBrowserShutdown(child);
+    {detached: process.platform !== 'win32', stdio: ['ignore', 'ignore', 'pipe']});
+  stopBrowser = trackBrowserShutdown(child, 3000, {processGroup: process.platform !== 'win32'});
   let spawnError;
   child.on('error', error => { spawnError = error; });
   child.stderr.on('data', data => { stderr = (stderr + data).slice(-4096); });
