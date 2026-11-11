@@ -15,6 +15,8 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ### Changed
 
+- Preserve unsigned radix string keys during serialization. Escalate CST
+  root shape changes to a full parse to preserve UTF-8 token boundaries.
 - Core parsing now preserves anchor declaration order and clips only a
   final line break present in the input. These are breaking parse behavior
   corrections under the family's patch-version policy.

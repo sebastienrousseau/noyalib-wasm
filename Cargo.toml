@@ -6,7 +6,6 @@ rust-version = "1.89.0"
 license = "MIT OR Apache-2.0"
 description = "WebAssembly (wasm-bindgen) bindings for the noyalib YAML library — browser-ready parse / serialise / lossless edit"
 repository = "https://github.com/sebastienrousseau/noyalib-wasm"
-homepage = "https://github.com/sebastienrousseau/noyalib-wasm"
 documentation = "https://docs.rs/noyalib-wasm"
 readme = "README.md"
 keywords = ["yaml", "wasm", "wasm-bindgen", "browser", "noyalib"]
