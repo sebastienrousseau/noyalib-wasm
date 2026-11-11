@@ -5,6 +5,7 @@
 // Usage: node scripts/check-browser-consumer.mjs pkg-web /path/to/chrome
 // Add --bundler for a web bundle whose WASM module is initialized on import.
 import assert from 'node:assert/strict';
+import { trackBrowserShutdown } from './browser-shutdown.mjs';
 import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -81,12 +82,14 @@ const server = createServer(async (request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}/`;
 let child;
+let stopBrowser;
 let socket;
 let stderr = '';
 try {
   child = spawn(browser, ['--headless', '--disable-gpu', '--remote-debugging-port=0',
     '--remote-debugging-address=127.0.0.1', `--user-data-dir=${profile}`, 'about:blank'],
     {stdio: ['ignore', 'ignore', 'pipe']});
+  stopBrowser = trackBrowserShutdown(child);
   let spawnError;
   child.on('error', error => { spawnError = error; });
   child.stderr.on('data', data => { stderr = (stderr + data).slice(-4096); });
@@ -127,12 +130,12 @@ try {
   throw error;
 } finally {
   socket?.close();
-  if (child?.pid && child.exitCode === null && child.signalCode === null) {
-    const exited = new Promise(resolve => child.once('exit', resolve));
-    child.kill('SIGTERM');
-    await Promise.race([exited, delay(3000)]);
-    if (child.exitCode === null && child.signalCode === null) { child.kill('SIGKILL'); await exited; }
+  try {
+    await stopBrowser?.();
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    // Chromium descendants can finish profile writes after the main process.
+    // Retry transient ENOTEMPTY; persistent cleanup failures still fail the gate.
+    await rm(profile, {recursive: true, force: true, maxRetries: 5, retryDelay: 100});
   }
-  await new Promise(resolve => server.close(resolve));
-  await rm(profile, {recursive: true, force: true});
 }
