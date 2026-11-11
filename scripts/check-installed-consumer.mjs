@@ -15,6 +15,9 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const fixture = join(root, 'tests/typescript');
 const pkg = resolve(process.argv[2] || 'pkg');
 const browser = process.argv[3];
+const resources = process.argv.includes('--resources');
+const injectLeak = process.argv.includes('--inject-leak');
+const injectJsLeak = process.argv.includes('--inject-js-leak');
 const scratch = await mkdtemp(join(tmpdir(), 'noyalib-installed-consumer-'));
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const tsc = join(fixture, 'node_modules/.bin/tsc');
@@ -54,7 +57,10 @@ try {
     const webpack = createRequire(join(fixture, 'package.json'))('webpack');
     const entry = join(scratch, 'browser-entry.mjs');
     const bundled = join(scratch, 'bundle');
-    await writeFile(entry, "export * from '@sebastienrousseau/noyalib-wasm';\n");
+    const diagnosticExport = resources
+      ? `export {memory as __resourceMemory} from ${JSON.stringify(join(installed, 'noyalib_wasm_bg.wasm'))};\n`
+      : '';
+    await writeFile(entry, "export * from '@sebastienrousseau/noyalib-wasm';\n" + diagnosticExport);
     const compiler = webpack({
       context: scratch, mode: 'production', target: 'web', entry, devtool: false,
       experiments: { asyncWebAssembly: true },
@@ -68,7 +74,15 @@ try {
       });
     }));
     const script = join(root, 'scripts/check-browser-consumer.mjs');
-    bundle = { webpack: webpack.version, ...JSON.parse(run(process.execPath, [script, bundled, browser, '--bundler'])) };
+    const browserArgs = [script, bundled, browser, '--bundler',
+      ...(resources ? ['--resources'] : []), ...(injectLeak ? ['--inject-leak'] : []), ...(injectJsLeak ? ['--inject-js-leak'] : [])];
+    let browserReport;
+    try { browserReport = run(process.execPath, browserArgs); }
+    catch (error) {
+      if (error.stdout) process.stdout.write(error.stdout);
+      throw error;
+    }
+    bundle = {webpack: webpack.version, ...JSON.parse(browserReport)};
   }
   console.log(JSON.stringify({ status: 'passed', version: declared.version, bundle,
     node: process.version, typescript: run(tsc, ['--version']).trim(),

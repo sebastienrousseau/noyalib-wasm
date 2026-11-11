@@ -351,10 +351,12 @@ pub fn parse(yaml: &str) -> Result<JsValue, JsError> {
     to_js(&value).map_err(|e| JsError::new(&e.to_string()))
 }
 
-/// Parse YAML and return the JSON data model: like [`parse`], but every
-/// tag is stripped recursively, so the result is exactly what the YAML
-/// test suite's expected JSON is and what a JSON consumer expects.
-/// `parse` keeps tags as `{"!tag": value}` for callers that need them.
+/// Parse YAML with tags stripped recursively. [`parse`] keeps tags as
+/// `{"!tag": value}` for callers that need them.
+///
+/// This projection retains YAML NaN and infinity as JavaScript numbers;
+/// use [`validate_json`] to require JSON-compatible values. Integer
+/// conversion refuses values outside JavaScript's safe integer range.
 #[wasm_bindgen(js_name = parseJson)]
 pub fn parse_json(yaml: &str) -> Result<JsValue, JsError> {
     let value = core::parse_yaml_to_json_model(yaml).map_err(|e| JsError::new(&e.to_string()))?;

@@ -87,6 +87,15 @@ jobs:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
+        with:
+          deno-version: '2.9.8'
+          cache: 'false'
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+        with:
+          bun-version: '1.4.4'
+          no-cache: true
+          token: ''
       - name: Browser shutdown regressions
         run: node --test scripts/tests/test-browser-shutdown.mjs
       - name: wasm-pack test --node
@@ -95,6 +104,19 @@ jobs:
         run: |
           wasm-pack build --dev --target nodejs --out-dir pkg-node
           node scripts/check-hostile-input.js pkg-node
+      - name: Bound optimized WASM and JavaScript heap growth
+        run: |
+          wasm-pack build --release --target nodejs --out-dir pkg-node -- --locked
+          node --test scripts/tests/test-runtime-resources.mjs
+          node --expose-gc scripts/check-runtime-resources.mjs pkg-node normal > runtime-resources-node.json
+          node scripts/check-runtime-contract.mjs pkg-node/noyalib_wasm.js > runtime-contract-node.json
+          bun -e 'if (Bun.version !== "1.4.4") throw Error("Unexpected Bun version")'
+          bun scripts/check-runtime-contract.mjs pkg-node/noyalib_wasm.js > runtime-contract-bun.json
+          wasm-pack build --release --target deno --out-dir pkg-deno -- --locked
+          deno eval 'if (Deno.version.deno !== "2.9.8") throw Error("Unexpected Deno version")'
+          deno run --no-config --allow-read=pkg-deno scripts/check-runtime-contract.mjs pkg-deno/noyalib_wasm.js > runtime-contract-deno.json
+          wasm-pack build --release --target no-modules --out-dir pkg-no-modules -- --locked
+          node scripts/check-browser-consumer.mjs pkg-no-modules "$(command -v google-chrome)" --no-modules > runtime-contract-classic.json
       - name: Execute the generated package in a headless browser
         run: |
           wasm-pack build --dev --target web --out-dir pkg-web -- --locked
@@ -108,7 +130,18 @@ jobs:
           scripts/check-npm-package.sh pkg
           npm ci --ignore-scripts --prefix tests/typescript
           npm audit --package-lock-only --ignore-scripts --prefix tests/typescript
-          node scripts/check-installed-consumer.mjs pkg "$(command -v google-chrome)"
+          CHROME_BIN="$(command -v google-chrome)" node --test scripts/tests/test-browser-resources.mjs
+          node scripts/check-installed-consumer.mjs pkg "$(command -v google-chrome)" --resources > runtime-resources-browser.json
+      - name: Retain runtime resource measurements
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: wasm-runtime-resources
+          path: |
+            runtime-resources-node.json
+            runtime-resources-browser.json
+            runtime-contract-*.json
+          if-no-files-found: error
 
   coverage-gate:
     # Native coverage gates the pure-Rust core (src/core.rs, measured

@@ -15,12 +15,18 @@ import { setTimeout as delay } from 'node:timers/promises';
 
 const packageRoot = resolve(process.argv[2] || 'pkg-web');
 const browser = process.argv[3] || process.env.CHROME_BIN || 'google-chrome';
-const sourceTarget = process.argv[4] !== '--bundler';
+const classicTarget = process.argv.includes('--no-modules');
+const sourceTarget = !process.argv.includes('--bundler');
+const resourceMode = process.argv.includes('--resources');
+const injectLeak = process.argv.includes('--inject-leak');
+const injectJsLeak = process.argv.includes('--inject-js-leak');
 const profile = await mkdtemp(join(tmpdir(), 'noyalib-browser-check-'));
-const page = `<!doctype html><meta charset="utf-8"><body><script type="module">
+const page = `<!doctype html><meta charset="utf-8"><body>${classicTarget ? '<script src="/noyalib_wasm.js"></script>' : ''}<script type="module">
+let resources;
 try {
-  const w = await import('/noyalib_wasm.js');
-  if (${sourceTarget}) await w.default();
+  const w = ${classicTarget ? 'wasm_bindgen' : "await import('/noyalib_wasm.js')"};
+  if (${classicTarget}) await w();
+  else if (${sourceTarget}) await w.default();
   let checks = 0;
   function check(value, message) { if (!value) throw Error(message); checks++; }
   for (const name of ['parse', 'parseJson', 'stringify', 'validateJson', 'getPath', 'merge', 'WasmDocument']) {
@@ -60,9 +66,24 @@ try {
     check(refused && doc.toString() === before, 'cycle rejection is atomic');
     check(w.parse('still: usable\\n').still === 'usable', 'instance survives refusals');
   } finally { doc.free(); }
-  document.body.dataset.result = JSON.stringify({status: 'passed', checks, browser: navigator.userAgent});
+  const {checkRuntimeContract} = await import('/__runtime-contract-workload.mjs');
+  checks += checkRuntimeContract(w);
+  if (${resourceMode}) {
+    const {measureRuntimeResources} = await import('/__runtime-resource-workload.mjs');
+    resources = measureRuntimeResources(w, w.__resourceMemory,
+      {injectLeak: ${injectLeak}, injectJsLeak: ${injectJsLeak}, operationsPerWindow: 128,
+        collect: () => {
+          if (typeof globalThis.gc !== 'function' || !performance.memory)
+            throw Error('browser heap measurements are unavailable');
+          globalThis.gc();
+          return {js_heap_bytes: performance.memory.usedJSHeapSize};
+        }});
+    check(resources.status === 'passed', 'linear-memory growth budget');
+  }
+  document.body.dataset.result = JSON.stringify({status: 'passed', checks,
+    browser: navigator.userAgent, runtime_resources: resources});
 } catch (error) {
-  document.body.dataset.result = JSON.stringify({status: 'failed', error: String(error.stack || error)});
+  document.body.dataset.result = JSON.stringify({status: 'failed', error: String(error.stack || error), runtime_resources: resources});
 }
 </script>`;
 const server = createServer(async (request, response) => {
@@ -71,6 +92,16 @@ const server = createServer(async (request, response) => {
     if (pathname === '/') {
       response.setHeader('Content-Type', 'text/html; charset=utf-8');
       response.end(page);
+      return;
+    }
+    if (pathname === '/__runtime-contract-workload.mjs') {
+      response.setHeader('Content-Type', 'text/javascript');
+      response.end(await readFile(new URL('./runtime-contract-workload.mjs', import.meta.url)));
+      return;
+    }
+    if (resourceMode && pathname === '/__runtime-resource-workload.mjs') {
+      response.setHeader('Content-Type', 'text/javascript');
+      response.end(await readFile(new URL('./runtime-resource-workload.mjs', import.meta.url)));
       return;
     }
     const file = resolve(packageRoot, '.' + decodeURIComponent(pathname));
@@ -87,7 +118,8 @@ let socket;
 let stderr = '';
 try {
   child = spawn(browser, ['--headless', '--disable-gpu', '--remote-debugging-port=0',
-    '--remote-debugging-address=127.0.0.1', `--user-data-dir=${profile}`, 'about:blank'],
+    '--remote-debugging-address=127.0.0.1', `--user-data-dir=${profile}`,
+    ...(resourceMode ? ['--js-flags=--expose-gc', '--enable-precise-memory-info'] : []), 'about:blank'],
     {detached: process.platform !== 'win32', stdio: ['ignore', 'ignore', 'pipe']});
   stopBrowser = trackBrowserShutdown(child, 3000, {processGroup: process.platform !== 'win32'});
   let spawnError;
