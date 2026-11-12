@@ -116,15 +116,17 @@ let child;
 let stopBrowser;
 let socket;
 let stderr = '';
+let stdout = '';
 try {
   child = spawn(browser, ['--headless', '--disable-gpu', '--remote-debugging-port=0',
     '--remote-debugging-address=127.0.0.1', `--user-data-dir=${profile}`,
     ...(resourceMode ? ['--js-flags=--expose-gc', '--enable-precise-memory-info'] : []), 'about:blank'],
-    {detached: process.platform !== 'win32', stdio: ['ignore', 'ignore', 'pipe']});
+    {detached: process.platform !== 'win32', stdio: ['ignore', 'pipe', 'pipe']});
   stopBrowser = trackBrowserShutdown(child, 3000, {processGroup: process.platform !== 'win32'});
   let spawnError;
   child.on('error', error => { spawnError = error; });
-  child.stderr.on('data', data => { stderr = (stderr + data).slice(-4096); });
+  child.stderr.on('data', data => { stderr = (stderr + data).slice(-65536); });
+  child.stdout.on('data', data => { stdout = (stdout + data).slice(-65536); });
   let port;
   for (let attempt = 0; attempt < 150; attempt++) {
     if (spawnError) throw spawnError;
@@ -158,7 +160,8 @@ try {
   console.log(JSON.stringify(result, null, 2));
   assert.equal(result.status, 'passed', result.error);
 } catch (error) {
-  console.error(stderr);
+  console.error(JSON.stringify({browser, profile,
+    exitCode: child?.exitCode, signalCode: child?.signalCode, stdout, stderr}, null, 2));
   throw error;
 } finally {
   socket?.close();
