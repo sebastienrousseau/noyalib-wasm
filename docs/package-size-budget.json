@@ -6,7 +6,7 @@
     "raw_bytes": 598818,
     "gzip_level_9_bytes": 208595
   },
-  "raw_limit_bytes": 628759,
+  "raw_limit_bytes": 640000,
   "gzip_level_9_limit_bytes": 219025,
-  "rationale": "Allow at most 5% growth over the measured published module; review any increase with a source and consumer impact explanation."
+  "rationale": "Allow at most 5% growth over the measured published module; review any increase with a source and consumer impact explanation. noyalib 0.0.61 measured 634,505 raw bytes (5.96% over 0.0.60; gzip 217,783, still within 5%): the core's YAML 1.2.2 parser fixes (flow continuation indentation, document-prefix BOMs, radix and tag resolution, typed key spelling) add scanner and loader code. The raw limit rises to 640,000 bytes (6.9%); the gzip limit, which governs transfer size, is unchanged."
 }
