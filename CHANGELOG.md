@@ -20,6 +20,9 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
   and a document prefix keep it. Parsing such input now throws.
 - **Breaking:** error paths bracket sequence indices (`items[0].name`,
   was `items.0.name`).
+- The `console_error_panic_hook` feature now installs the hook when the
+  module loads, so a panic logs its message and location to
+  `console.error` before the abort. It was declared but never wired.
 - The exact core pin advances to `=0.0.62`.
 
 ## [v0.0.61] - Unreleased

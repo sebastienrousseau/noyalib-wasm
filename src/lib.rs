@@ -48,8 +48,8 @@
 //! - **Host abort on `panic = abort`.** Every release build uses `panic =
 //!   abort` (per `Cargo.toml`), so any logic-level panic terminates the
 //!   WebAssembly instance with no chance of `catch_unwind`.
-//!   `console_error_panic_hook` is wired in `examples/` so debug builds surface
-//!   a JS-readable trace before the abort.
+//!   Build with the `console_error_panic_hook` feature to log the panic
+//!   message and location to `console.error` before the abort.
 //!
 //! # Errors
 //!
@@ -110,6 +110,15 @@ mod guard;
 use noyalib::cst::{Document, parse_document};
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
+
+/// With the `console_error_panic_hook` feature, route a Rust panic to
+/// `console.error` with its message and location before the instance
+/// aborts. Runs once when the module is instantiated.
+#[cfg(feature = "console_error_panic_hook")]
+#[wasm_bindgen(start)]
+fn install_panic_hook() {
+    console_error_panic_hook::set_once();
+}
 
 /// Convert a Rust value to a `JsValue` using the JS-friendly
 /// serializer config:
