@@ -11,7 +11,7 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
-## [v0.0.62] - Unreleased
+## [v0.0.62] - 2026-11-16
 
 v0.0.61 was never published: on 2026-11-15 the maintainer folded it into
 this release, in lockstep with the core, so the registry goes from
@@ -28,6 +28,10 @@ v0.0.60 to v0.0.62. Every v0.0.61 change below ships here.
   module loads, so a panic logs its message and location to
   `console.error` before the abort. It was declared but never wired.
 - The exact core pin advances to `=0.0.62`.
+
+### Dependencies
+
+- GitHub Actions: the github-actions group's four pin updates (#126).
 
 ## [v0.0.61] - Not published
 
