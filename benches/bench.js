@@ -15,12 +15,21 @@
 // point people already have intuition for.
 //
 // Run from the workspace root:
-//   wasm-pack build --release --target nodejs crates/noyalib-wasm
-//   node crates/noyalib-wasm/benches/bench.js
+//   wasm-pack build --release --target nodejs --out-dir pkg-node
+//   node benches/bench.js
 
 "use strict";
 
-const { parse, stringify, getPath, merge, WasmDocument } = require("../pkg/noyalib_wasm.js");
+const { createHash } = require("node:crypto");
+const { readFileSync, writeFileSync } = require("node:fs");
+const path = require("node:path");
+const { gzipSync } = require("node:zlib");
+const directory = process.env.NOYALIB_WASM_NODE_PKG || path.join(__dirname, "../pkg-node");
+const startImport = process.hrtime.bigint();
+const { parse, stringify, getPath, merge, WasmDocument } = require(path.resolve(directory, "noyalib_wasm.js"));
+const importNs = Number(process.hrtime.bigint() - startImport);
+const results = {};
+
 
 // ── fixtures ────────────────────────────────────────────────────────
 const SMALL = "host: api.example.com\nport: 8080\ndebug: false\n";
@@ -51,11 +60,14 @@ function bench(label, fn) {
     // Warm up so wasm instantiation and JIT tiering are not in the sample.
     for (let i = 0; i < 50; i++) fn();
 
+    const samples = [];
     let ops = 0;
     const t0 = process.hrtime.bigint();
     let elapsedMs = 0;
     do {
+        const batch = process.hrtime.bigint();
         for (let i = 0; i < 100; i++) fn();
+        samples.push(Number(process.hrtime.bigint() - batch) / 100);
         ops += 100;
         elapsedMs = Number(process.hrtime.bigint() - t0) / 1e6;
     } while (elapsedMs < MIN_MS);
@@ -65,6 +77,10 @@ function bench(label, fn) {
     console.log(
         `  ${label.padEnd(38)} ${fmt(opsPerSec).padStart(12)} ops/s   ${usPerOp.toFixed(2).padStart(9)} µs/op`,
     );
+    const ordered = samples.slice().sort((a, b) => a - b);
+    results[label] = { median_ns: ordered[Math.floor(ordered.length / 2)],
+        p95_batch_mean_ns: ordered[Math.ceil(ordered.length * 0.95) - 1],
+        ops_per_second: opsPerSec, samples_ns_per_operation: samples, operations: ops };
     return opsPerSec;
 }
 
@@ -84,7 +100,7 @@ const yamlMedium = bench("parse (medium, 50 services)", () => parse(MEDIUM));
 const jsonMedium = bench("JSON.parse (same data, baseline)", () => JSON.parse(MEDIUM_JSON));
 console.log(
     `  -> JSON.parse is ${(jsonMedium / yamlMedium).toFixed(1)}x faster on equivalent data;\n` +
-        "     that gap is the price of comments, anchors and lossless spans.",
+        "     these timings compare two different format and runtime paths.",
 );
 
 console.log("\nstringify — JS value back to YAML");
@@ -116,3 +132,15 @@ bench("merge (medium + small overlay)", () => merge(MEDIUM, overlay));
 console.log("\nDone. Numbers are order-of-magnitude guidance, not a");
 console.log("statistically rigorous benchmark — see the core crate's");
 console.log("Criterion suite for that.");
+
+doc.free();
+if (process.env.NOYALIB_WASM_BENCH_JSON) {
+    const wasm = readFileSync(path.resolve(directory, "noyalib_wasm_bg.wasm"));
+    const hash = value => createHash("sha256").update(value).digest("hex");
+    writeFileSync(process.env.NOYALIB_WASM_BENCH_JSON, JSON.stringify({
+        runtime: process.version, import_ns: importNs,
+        wasm_bytes: wasm.length, gzip_bytes: gzipSync(wasm).length, wasm_sha256: hash(wasm),
+        fixture_sha256: { small: hash(SMALL), medium: hash(MEDIUM), json: hash(MEDIUM_JSON) },
+        benchmarks: results,
+    }, null, 2) + "\n");
+}

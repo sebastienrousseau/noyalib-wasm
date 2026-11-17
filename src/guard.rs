@@ -57,8 +57,9 @@ impl fmt::Display for ShapeError {
 /// `Clone` is a reference copy. The `JsValue` implementation lives with
 /// the bindings in `lib.rs`.
 pub(crate) trait Node: Sized + Clone {
-    /// `Some(children)` for a container, `None` for a leaf.
-    fn children(&self) -> Option<Vec<Self>>;
+    /// Refuse a container larger than `limit` before expanding it.
+    /// Return `Ok(Some(children))` for a container or `Ok(None)` for a leaf.
+    fn children(&self, limit: usize) -> Result<Option<Vec<Self>>, ShapeError>;
     /// Whether `self` and `other` are the same container.
     fn same(&self, other: &Self) -> bool;
 }
@@ -67,15 +68,19 @@ pub(crate) trait Node: Sized + Clone {
 /// cyclic, deeper than [`MAX_DEPTH`] or larger than [`MAX_NODES`].
 pub(crate) fn check_shape<N: Node>(root: &N) -> Result<(), ShapeError> {
     let mut ancestors: Vec<N> = Vec::new();
-    let mut budget = MAX_NODES;
+    // Charge each child when its parent expands it, before collecting more
+    // descendants. Pending sibling vectors then share the same bounded budget.
+    let mut budget = MAX_NODES - 1;
     visit(root, &mut ancestors, &mut budget)
 }
 
 fn visit<N: Node>(node: &N, ancestors: &mut Vec<N>, budget: &mut usize) -> Result<(), ShapeError> {
-    *budget = budget.checked_sub(1).ok_or(ShapeError::TooLarge)?;
-    let Some(children) = node.children() else {
+    let Some(children) = node.children(*budget)? else {
         return Ok(());
     };
+    *budget = budget
+        .checked_sub(children.len())
+        .ok_or(ShapeError::TooLarge)?;
     if ancestors.len() >= MAX_DEPTH {
         // A cycle never bottoms out, so it always ends up here; only then
         // is it worth comparing against the ancestors.
@@ -183,10 +188,15 @@ mod tests {
     }
 
     impl Node for T {
-        fn children(&self) -> Option<Vec<Self>> {
+        fn children(&self, limit: usize) -> Result<Option<Vec<Self>>, ShapeError> {
             match self {
-                T::Leaf => None,
-                T::List(items) => Some(items.borrow().clone()),
+                T::Leaf => Ok(None),
+                T::List(items) => {
+                    if items.borrow().len() > limit {
+                        return Err(ShapeError::TooLarge);
+                    }
+                    Ok(Some(items.borrow().clone()))
+                }
             }
         }
         fn same(&self, other: &Self) -> bool {

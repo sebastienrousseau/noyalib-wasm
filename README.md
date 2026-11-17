@@ -53,6 +53,12 @@
 
 ---
 
+## Development version
+
+This branch prepares unreleased v0.0.62. Versioned Cargo examples describe
+that upcoming release; use a published version for registry installation
+until it ships. Local verification uses the sibling core source explicitly.
+
 ## Install
 
 ### As a JavaScript library
@@ -81,9 +87,8 @@ wasm-pack build --release --target bundler
 ## Quick Start
 
 ```js
-import init, { parse, getPath, WasmDocument } from "@sebastienrousseau/noyalib-wasm";
+import { parse, getPath, WasmDocument } from "@sebastienrousseau/noyalib-wasm";
 
-await init();
 
 const value = parse("host: api.example.com\nport: 8080\n");
 const port = getPath("port: 8080\n", "port");
@@ -110,7 +115,7 @@ console.log(document.toString());
 | Indexed access | `getPath` and `merge` | Stable |
 | Validation | JSON-compatible YAML check | Stable |
 | Lossless CST | `WasmDocument` reads and surgical edits | Stable |
-| Targets | bundler, web, nodejs, deno, and no-modules | Supported |
+| Targets | bundler, web, nodejs, deno, and no-modules | See the executed [runtime matrix](docs/RUNTIME-CONTRACT.md) |
 
 ## Ecosystem comparison
 
@@ -125,15 +130,17 @@ See [`docs/COMPARISON.md`](docs/COMPARISON.md) for scope and caveats.
 ## Benchmarks
 
 The repository measures calls across the real JavaScript-to-WASM boundary and
-tracks release bundle size. Measurements are descriptive, not CI pass/fail
-thresholds.
+tracks release bundle size. Timing observations are descriptive. The [runtime resource gate](docs/RUNTIME-RESOURCES.md)
+bounds WASM and JavaScript heap growth and proves detection with retained resources.
 
 ```bash
 wasm-pack build --release --target nodejs
 node benches/bench.js
 ```
 
-See [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md) for the recorded method.
+See [`docs/BENCHMARKS.md`](docs/BENCHMARKS.md) for the recorded method and
+[`docs/RUNTIME-CONTRACT.md`](docs/RUNTIME-CONTRACT.md) for exercised targets
+and value-conversion limits.
 
 ## Features
 

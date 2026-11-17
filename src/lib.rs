@@ -10,21 +10,11 @@
 //! `cargo test` on the rlib side; the bindings in this module are
 //! the thin JsValue conversion shells.
 //!
-//! # Cargo features
+//! # Build targets
 //!
-//! - **`wasm-opt`** *(optional, off by default)* — enables a post-build pass
-//!   that re-runs Binaryen's `wasm-opt -O3 -s` on the produced `.wasm` to
-//!   shrink the bundle (~17% smaller on `noyalib-wasm`). Pulls in no extra Rust
-//!   dependencies; it is a build-script feature only. Disable for fastest dev
-//!   builds.
-//!
-//! Optional `noyalib` features pulled in by a downstream wasm-pack
-//! consumer (`schema`, `parallel` …) compile against the
-//! `wasm32-unknown-unknown` target only when their dep tree is
-//! WASM-clean — `parallel` (rayon) requires
-//! `--target wasm32-wasip1-threads`, not the default browser
-//! target. The canonical `noyalib` feature matrix lives in
-//! [`crates/noyalib/src/lib.rs`](https://docs.rs/noyalib).
+//! The published npm package uses wasm-pack's bundler target. Source builds
+//! can generate separate web or Node loaders; these are not package subpaths.
+//! See the [bundling guide](https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/bundling.md).
 //!
 //! # MSRV
 //!
@@ -58,8 +48,8 @@
 //! - **Host abort on `panic = abort`.** Every release build uses `panic =
 //!   abort` (per `Cargo.toml`), so any logic-level panic terminates the
 //!   WebAssembly instance with no chance of `catch_unwind`.
-//!   `console_error_panic_hook` is wired in `examples/` so debug builds surface
-//!   a JS-readable trace before the abort.
+//!   Build with the `console_error_panic_hook` feature to log the panic
+//!   message and location to `console.error` before the abort.
 //!
 //! # Errors
 //!
@@ -77,24 +67,13 @@
 //! handles. Web Workers hosting independent WASM instances are
 //! the recommended way to parallelise on the browser.
 //!
-//! # Platform support
+//! # Platform support and measurements
 //!
-//! Builds against every wasm-pack target: `bundler` (Webpack /
-//! Rollup / esbuild / Vite), `web` (native ES module), `nodejs`
-//! (CommonJS), `deno`, `no-modules` (plain global). CI verifies
-//! the `wasm32-unknown-unknown` target each PR via
-//! `wasm-pack test --node`. Cloudflare Workers, Deno, and Bun
-//! consume the `bundler` target via their own packaging step;
-//! see [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/bundling.md).
-//!
-//! # Performance
-//!
-//! Release bundle size: ~338 KB raw, ~140 KB gzip. With the
-//! optional `wasm-opt` post-build pass (`--features wasm-opt`):
-//! ~280 KB raw, ~115 KB gzip. Tree-shaking-friendly: the
-//! `WasmDocument` API and the plain `parse` / `stringify` API
-//! are independent modules; bundlers drop whichever your code
-//! does not import.
+//! CI executes the wasm-bindgen boundary under Node. Browser and bundler
+//! support require consumer execution against the generated package.
+//! Measure bundle size, initialization, latency and memory from the actual
+//! output with its source/tool versions; see the benchmark documentation.
+//! Native test coverage does not establish JS or browser coverage.
 //!
 //! # Security
 //!
@@ -106,25 +85,18 @@
 //! `noyalib`'s `ParserConfig` defaults. Full posture:
 //! [`SECURITY.md`](https://github.com/sebastienrousseau/noyalib/blob/main/SECURITY.md).
 //!
-//! # API stability and SemVer
+//! # API stability and versioning
 //!
-//! Pre-1.0 (`0.0.x`): the JavaScript-facing API (`parse`,
-//! `stringify`, `WasmDocument` shape, JSON shape of returned
-//! values) is **stable** within a 0.0.x line — bug fixes only.
-//! Adding a new method or option is allowed within a 0.0.x
-//! bump; removing or renaming an exported binding, or changing
-//! the JSON shape of a returned object, is held to a 0.x bump
-//! (e.g. 0.0.x → 0.1.0). The Rust library surface (`WasmDocument`,
-//! `core::*`) is covered by the workspace SemVer policy in
-//! [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md#2-semver--api-stability).
-//! `cargo-semver-checks` runs in CI on every PR.
+//! The six-crate family increments strictly by +0.0.1 in lockstep.
+//! Changes to exported names, shapes or parsing behavior are breaking changes
+//! on that version axis and must be documented under the family policy.
 //!
 //! # Documentation
 //!
 //! - **Engineering policies** — workspace [`POLICIES.md`](https://github.com/sebastienrousseau/noyalib/blob/main/docs/POLICIES.md).
-//! - **JS API reference**: [`docs/js-api.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/js-api.md).
-//! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare, Deno, Bun): [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib/blob/main/crates/noyalib-wasm/doc/bundling.md).
-//! - **Browser / Node demos**: [`examples/`](https://github.com/sebastienrousseau/noyalib/tree/main/crates/noyalib-wasm/examples).
+//! - **JS API reference**: [`docs/js-api.md`](https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/js-api.md).
+//! - **Bundling guide** (Vite, Webpack, Next.js, Cloudflare, Deno, Bun): [`docs/bundling.md`](https://github.com/sebastienrousseau/noyalib-wasm/blob/main/docs/bundling.md).
+//! - **Browser / Node demos**: [`examples/`](https://github.com/sebastienrousseau/noyalib-wasm/tree/main/examples).
 
 #![deny(missing_docs)]
 // Every public item carries documentation. The scorecard probes for this
@@ -138,6 +110,15 @@ mod guard;
 use noyalib::cst::{Document, parse_document};
 use serde::Serialize;
 use wasm_bindgen::prelude::*;
+
+/// With the `console_error_panic_hook` feature, route a Rust panic to
+/// `console.error` with its message and location before the instance
+/// aborts. Runs once when the module is instantiated.
+#[cfg(feature = "console_error_panic_hook")]
+#[wasm_bindgen(start)]
+fn install_panic_hook() {
+    console_error_panic_hook::set_once();
+}
 
 /// Convert a Rust value to a `JsValue` using the JS-friendly
 /// serializer config:
@@ -167,7 +148,7 @@ fn from_js(value: JsValue) -> Result<noyalib::Value, JsError> {
 }
 
 mod js_shape {
-    use crate::guard::Node;
+    use crate::guard::{Node, ShapeError};
     use js_sys::{Array, Map, Object, Symbol, Uint8Array};
     use wasm_bindgen::{JsCast, JsValue};
 
@@ -176,26 +157,42 @@ mod js_shape {
     /// are not iterable. Byte buffers, sets and other iterables are
     /// leaves (the converter refuses or copies them without recursing).
     impl Node for JsValue {
-        fn children(&self) -> Option<Vec<Self>> {
+        fn children(&self, limit: usize) -> Result<Option<Vec<Self>>, ShapeError> {
             if Array::is_array(self) {
-                return Some(Array::from(self).iter().collect());
+                let array = self.unchecked_ref::<Array>();
+                let length = array.length();
+                if length as usize > limit {
+                    return Err(ShapeError::TooLarge);
+                }
+                return Ok(Some((0..length).map(|index| array.get(index)).collect()));
             }
             if !self.is_object() || self.is_instance_of::<Uint8Array>() {
-                return None;
+                return Ok(None);
             }
             if let Some(map) = self.dyn_ref::<Map>() {
+                if map.size() as usize > limit / 2 {
+                    return Err(ShapeError::TooLarge);
+                }
                 let mut out = Vec::new();
                 map.for_each(&mut |v, k| {
                     out.push(k);
                     out.push(v);
                 });
-                return Some(out);
+                return Ok(Some(out));
             }
             if Symbol::iterator().js_in(self) {
-                return None;
+                return Ok(None);
+            }
+            if Object::keys(self.unchecked_ref::<Object>()).length() as usize > limit {
+                return Err(ShapeError::TooLarge);
             }
             let entries = Object::entries(self.unchecked_ref());
-            Some(entries.iter().map(|e| Array::from(&e).get(1)).collect())
+            if entries.length() as usize > limit {
+                return Err(ShapeError::TooLarge);
+            }
+            Ok(Some(
+                entries.iter().map(|e| Array::from(&e).get(1)).collect(),
+            ))
         }
 
         fn same(&self, other: &Self) -> bool {
@@ -363,10 +360,12 @@ pub fn parse(yaml: &str) -> Result<JsValue, JsError> {
     to_js(&value).map_err(|e| JsError::new(&e.to_string()))
 }
 
-/// Parse YAML and return the JSON data model: like [`parse`], but every
-/// tag is stripped recursively, so the result is exactly what the YAML
-/// test suite's expected JSON is and what a JSON consumer expects.
-/// `parse` keeps tags as `{"!tag": value}` for callers that need them.
+/// Parse YAML with tags stripped recursively. [`parse`] keeps tags as
+/// `{"!tag": value}` for callers that need them.
+///
+/// This projection retains YAML NaN and infinity as JavaScript numbers;
+/// use [`validate_json`] to require JSON-compatible values. Integer
+/// conversion refuses values outside JavaScript's safe integer range.
 #[wasm_bindgen(js_name = parseJson)]
 pub fn parse_json(yaml: &str) -> Result<JsValue, JsError> {
     let value = core::parse_yaml_to_json_model(yaml).map_err(|e| JsError::new(&e.to_string()))?;

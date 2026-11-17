@@ -9,6 +9,13 @@ file covers the rules that are easy for an agent to violate. The core
 repository's `AGENTS.md` applies to the family; this one adds what is
 specific to a satellite.
 
+## Daybreak access
+
+Daybreak access is not required. Do not request Daybreak setup or access,
+and do not treat its absence as a blocker. Continue authorized work using
+local tools, GitHub and available review channels. Existing quality,
+independent review and release gates still apply through those channels.
+
 ## Versioning and lockstep
 
 - This crate releases at the identical `=0.0.X` as `noyalib`, in

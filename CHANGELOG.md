@@ -11,6 +11,55 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.62] - 2026-11-17
+
+v0.0.61 was never published: on 2026-11-15 the maintainer folded it into
+this release, in lockstep with the core, so the registry goes from
+v0.0.60 to v0.0.62. Every v0.0.61 change below ships here.
+
+### Changed
+
+- **Breaking:** the core refuses a byte order mark (U+FEFF) inside plain
+  and block scalars and comments, as YAML 1.2.2 requires; quoted scalars
+  and a document prefix keep it. Parsing such input now throws.
+- **Breaking:** error paths bracket sequence indices (`items[0].name`,
+  was `items.0.name`).
+- The `console_error_panic_hook` feature now installs the hook when the
+  module loads, so a panic logs its message and location to
+  `console.error` before the abort. It was declared but never wired.
+- The exact core pin advances to `=0.0.62`.
+
+### Dependencies
+
+- GitHub Actions: the github-actions group's four pin updates (#126).
+
+## [v0.0.61] - Not published
+
+Folded into v0.0.62 (2026-11-15); there is no v0.0.61 tag or registry
+release.
+
+### Changed
+
+- Update wasm-bindgen-test to 0.3.80 and its matching runtime bindings
+  to wasm-bindgen 0.2.130, contributed by Dependabot in #123. Review both
+  Cargo locks and record nine dependency delta audits.
+- Exercise root-shape edits with UTF-8 through the actual WASM export.
+- Preserve unsigned radix string keys during serialization. Escalate CST
+  root shape changes to a full parse to preserve UTF-8 token boundaries.
+- Core parsing now preserves anchor declaration order and clips only a
+  final line break present in the input. These are breaking parse behavior
+  corrections under the family's patch-version policy.
+- Release dry runs guard signing and GitHub release creation. Version
+  checks include every tracked Cargo lock.
+- Prepare the next lockstep version for the ecosystem assurance work.
+  Release dates and completed changes are recorded after verification.
+
+### Fixed
+
+- Reject oversized JS containers before visiting their children.
+- Verify browser and installed npm consumers, including TypeScript.
+- Include both declared licenses and check optimized module size.
+
 ## [v0.0.60] - 2026-11-10
 
 ### Changed

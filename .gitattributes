@@ -24,3 +24,7 @@ Cargo.lock text eol=lf -merge
 *.png binary
 *.jpg binary
 *.ico binary
+
+# Preserve exact fuzz reproducer bytes, including line endings.
+fuzz/regressions/** binary
+fuzz/corpus/** binary
