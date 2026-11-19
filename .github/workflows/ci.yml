@@ -30,29 +30,29 @@ concurrency:
 
 jobs:
   docs-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-docs-lint.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
   readme-examples:
     # Every ```rust block in README.md compiles against this crate.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-readme-examples.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-readme-examples.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
   yaml-test-suite:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-yaml-test-suite.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-yaml-test-suite.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
   cargo-deny:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-deny.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   cargo-vet:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-vet.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   cargo-machete:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-cargo-machete.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   reuse-lint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reuse.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   docs-strict:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-rustdoc-strict.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   verify-signatures:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-verify-signatures.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   test-matrix:
     # `noyalib-wasm` is a wasm-bindgen crate; the OS matrix is
@@ -60,7 +60,7 @@ jobs:
     # exercised end-to-end by wasm-bindgen-test under node (the
     # `wasm-test` job below) rather than by native `cargo test` on
     # macOS/Windows.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-test-matrix.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
     with:
       os-list: '["ubuntu-latest"]'
       toolchain-list: '["stable", "nightly"]'
@@ -149,7 +149,7 @@ jobs:
     # unreachable by native `cargo test` and is instead gated by the
     # `wasm-test` job above, so it is excluded here rather than
     # counted as an un-fixable coverage hole.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-coverage.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
     with:
       ignore-filename-regex: 'src/lib\.rs'
       fail-under-functions: 96
@@ -158,7 +158,7 @@ jobs:
 
   msrv-core:
     # Verifies the declared 1.89.0 floor actually builds.
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-msrv-core.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
     with:
       toolchain: "1.89.0"
 
@@ -202,8 +202,8 @@ jobs:
   # zizmor: workflow security audit, failing at medium and above.
   # single-publisher: only release.yml may publish anything.
   actionlint:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-actionlint.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-actionlint.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
   zizmor:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-zizmor.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-zizmor.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
   single-publisher:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-single-publisher.yml@2b3966235352c44b70071390faf6f06ec8b4d65d
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-single-publisher.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
