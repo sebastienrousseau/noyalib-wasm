@@ -20,10 +20,14 @@ const sourceTarget = !process.argv.includes('--bundler');
 const resourceMode = process.argv.includes('--resources');
 const injectLeak = process.argv.includes('--inject-leak');
 const injectJsLeak = process.argv.includes('--inject-js-leak');
+// Test hook: hold the page's main thread for seven seconds before the
+// checks, longer than any single DevTools evaluation used to wait.
+const injectSlowPage = process.argv.includes('--inject-slow-page');
 const profile = await mkdtemp(join(tmpdir(), 'noyalib-browser-check-'));
 const page = `<!doctype html><meta charset="utf-8"><body>${classicTarget ? '<script src="/noyalib_wasm.js"></script>' : ''}<script type="module">
 let resources;
 try {
+  if (${injectSlowPage}) { const until = performance.now() + 7000; while (performance.now() < until); }
   const w = ${classicTarget ? 'wasm_bindgen' : "await import('/noyalib_wasm.js')"};
   if (${classicTarget}) await w();
   else if (${sourceTarget}) await w.default();
@@ -144,14 +148,19 @@ try {
     const item = pending.get(message.id);
     if (item) { pending.delete(message.id); clearTimeout(item.timer); message.error ? item.reject(Error(JSON.stringify(message.error))) : item.resolve(message.result); }
   };
+  // The page runs its checks synchronously, so each Runtime.evaluate
+  // queues behind them: a slow runner can hold one call for several
+  // seconds. Bound the whole wait with one deadline, not each call.
+  const resultDeadline = Date.now() + 60000;
   const evaluate = expression => new Promise((resolve, reject) => {
     const id = ++nextId;
-    const timer = setTimeout(() => { pending.delete(id); reject(Error('browser evaluation timed out')); }, 5000);
+    const timer = setTimeout(() => { pending.delete(id); reject(Error('browser evaluation timed out')); },
+      Math.max(0, resultDeadline - Date.now()));
     pending.set(id, {resolve, reject, timer});
     socket.send(JSON.stringify({id, method: 'Runtime.evaluate', params: {expression, returnByValue: true}}));
   });
   let result;
-  for (let attempt = 0; attempt < 150; attempt++) {
+  while (Date.now() < resultDeadline) {
     const value = await evaluate('document.body && document.body.dataset.result');
     if (value.result?.value) { result = JSON.parse(value.result.value); break; }
     await delay(100);

@@ -18,6 +18,7 @@ const browser = process.argv[3];
 const resources = process.argv.includes('--resources');
 const injectLeak = process.argv.includes('--inject-leak');
 const injectJsLeak = process.argv.includes('--inject-js-leak');
+const injectSlowPage = process.argv.includes('--inject-slow-page');
 const scratch = await mkdtemp(join(tmpdir(), 'noyalib-installed-consumer-'));
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const tsc = join(fixture, 'node_modules/.bin/tsc');
@@ -75,7 +76,8 @@ try {
     }));
     const script = join(root, 'scripts/check-browser-consumer.mjs');
     const browserArgs = [script, bundled, browser, '--bundler',
-      ...(resources ? ['--resources'] : []), ...(injectLeak ? ['--inject-leak'] : []), ...(injectJsLeak ? ['--inject-js-leak'] : [])];
+      ...(resources ? ['--resources'] : []), ...(injectLeak ? ['--inject-leak'] : []), ...(injectJsLeak ? ['--inject-js-leak'] : []),
+      ...(injectSlowPage ? ['--inject-slow-page'] : [])];
     let browserReport;
     try { browserReport = run(process.execPath, browserArgs); }
     catch (error) {
