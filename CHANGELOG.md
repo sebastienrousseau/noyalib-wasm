@@ -11,7 +11,7 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
-## [v0.0.63] - Unreleased
+## [v0.0.63] - 2026-11-19
 
 ### Changed
 
@@ -25,7 +25,10 @@ see that repository's `CHANGELOG.md` for the release-wide notes.
 
 ### Dependencies
 
-- GitHub Actions: the github-actions group's 18 pin updates (#128).
+- GitHub Actions: the github-actions group's 18 pin updates (#128);
+  the shared core workflows run from the v0.0.62 release commit.
+- cargo-vet records the core 0.0.62 -> 0.0.63 delta
+  (`supply-chain/reviews/v0.0.63.md`).
 
 ## [v0.0.62] - 2026-11-17
 
