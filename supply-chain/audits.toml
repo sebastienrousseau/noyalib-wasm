@@ -89,6 +89,12 @@ criteria = "safe-to-deploy"
 delta = "0.0.61 -> 0.0.62"
 notes = "Author self-review, not independent: recorded at the maintainer's direction for a delta prepared with Claude Code (claude-opus-5-5). Core 11ac547 to 8279884: byte order mark refusal in nb-char text behind the new ParserConfig::byte_order_marks_in_text, bracketed error-path indices and the serde_yaml root-index spelling, and removal of the bench-only compare-saphyr feature and serde-saphyr dependency. No unsafe code, new dependency or ambient capability. v0.0.61 is never published. See supply-chain/reviews/v0.0.62.md."
 
+[[audits.noyalib]]
+who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
+criteria = "safe-to-deploy"
+delta = "0.0.62 -> 0.0.63"
+notes = "Author self-review, not independent: recorded at the maintainer's direction for a delta prepared with Claude Code (claude-opus-5-5); the fix was contributed by @zoosky (noyalib#534). Core 80c5b74 to ca3ad8d: cst::Document's can_use_block_literal refuses a C1 control other than NEL, U+FFFE, U+FFFF or a byte order mark, so such strings take the existing double-quoted spelling. No unsafe code, new dependency or ambient capability. See supply-chain/reviews/v0.0.63.md."
+
 [[audits.pin-project-lite]]
 who = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
 criteria = "safe-to-deploy"
