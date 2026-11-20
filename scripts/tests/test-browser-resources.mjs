@@ -9,10 +9,11 @@ import {resolve, dirname} from 'node:path';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const browser = process.env.CHROME_BIN;
-const run = (leak, jsLeak = false) => {
+const run = (leak, jsLeak = false, slowPage = false) => {
   assert.ok(browser, 'CHROME_BIN must name the tested browser');
   const args = [resolve(root, 'scripts/check-installed-consumer.mjs'), resolve(root, 'pkg'),
-    browser, '--resources', ...(leak ? ['--inject-leak'] : []), ...(jsLeak ? ['--inject-js-leak'] : [])];
+    browser, '--resources', ...(leak ? ['--inject-leak'] : []), ...(jsLeak ? ['--inject-js-leak'] : []),
+    ...(slowPage ? ['--inject-slow-page'] : [])];
   const child = spawnSync(process.execPath, args, {encoding: 'utf8', timeout: 120000});
   assert.ifError(child.error);
   assert.equal(child.signal, null, child.stderr);
@@ -43,4 +44,15 @@ test('the browser heap budget rejects retained parsed JS values', () => {
   const result = JSON.parse(child.stdout);
   assert.equal(result.status, 'failed');
   assert.ok(result.runtime_resources.js_heap_growth_bytes > result.runtime_resources.js_heap_allowance_bytes);
+});
+
+// A synchronous page workload queues every DevTools evaluation behind it.
+// Seven seconds of it outlasted the old five-second per-call timeout, the
+// way the dev-build resource run did on a slow runner (CI run 44135717605).
+test('a page that holds its main thread past one evaluation still reports', () => {
+  const child = run(false, false, true);
+  assert.equal(child.status, 0, child.stderr);
+  const result = JSON.parse(child.stdout);
+  assert.equal(result.bundle.status, 'passed');
+  assert.equal(result.bundle.runtime_resources.status, 'passed');
 });

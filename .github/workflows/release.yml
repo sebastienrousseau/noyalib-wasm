@@ -40,7 +40,7 @@ jobs:
   # identity on the commit being built, and signed by a pinned key.
   # Passes without checking on a workflow_dispatch dry run.
   tag-signature:
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-tag-signature.yml@7529f1b3557ec62be0ae6c3a1cd968863a0fbe28
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-tag-signature.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
 
   # ── Quality gate ────────────────────────────────────────────────────
   validate:
@@ -340,7 +340,7 @@ jobs:
   # the `artifacts` job produced (shared-reproducible-package.yml).
   reproducible:
     needs: artifacts
-    uses: sebastienrousseau/noyalib/.github/workflows/shared-reproducible-package.yml@7529f1b3557ec62be0ae6c3a1cd968863a0fbe28
+    uses: sebastienrousseau/noyalib/.github/workflows/shared-reproducible-package.yml@80c5b746889fb72a52fdf1d686e54d0016c0ecf9
     with:
       package-args: --all-features --allow-dirty
 

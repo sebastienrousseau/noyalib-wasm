@@ -11,6 +11,25 @@ and versions in lockstep with the
 [`noyalib`](https://github.com/sebastienrousseau/noyalib) core crate —
 see that repository's `CHANGELOG.md` for the release-wide notes.
 
+## [v0.0.63] - 2026-11-20
+
+### Changed
+
+- The exact core pin advances to `=0.0.63`. The core's one change
+  (noyalib#533): `cst::Document::insert_entry_value` double-quotes a
+  multi-line string holding a C1 control other than NEL, U+FFFE, U+FFFF
+  or a byte order mark, instead of writing a `|` block the v0.0.62
+  parser refuses. The JavaScript API does not call `insert_entry_value`,
+  and `setValue` already double-quotes these characters, so its output
+  is unchanged.
+
+### Dependencies
+
+- GitHub Actions: the github-actions group's 18 pin updates (#128);
+  the shared core workflows run from the v0.0.62 release commit.
+- cargo-vet records the core 0.0.62 -> 0.0.63 delta
+  (`supply-chain/reviews/v0.0.63.md`).
+
 ## [v0.0.62] - 2026-11-17
 
 v0.0.61 was never published: on 2026-11-15 the maintainer folded it into
